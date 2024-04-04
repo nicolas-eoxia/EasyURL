@@ -120,6 +120,18 @@ print '<td>' . $langs->trans('DefaultOriginalUrlDescription') . '</td>';
 print '<td><input class="minwidth300" type="text" name="default_original_url" value="' . $conf->global->EASYURL_DEFAULT_ORIGINAL_URL . '"></td>';
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>' . $langs->trans('UseMainInfoCompanyName') . '</td>';
+print '<td>' . $langs->trans('UseMainInfoCompanyNameDescription') . '</td>';
+print '<td>';
+print ajax_constantonoff('EASYURL_USE_MAIN_INFO_SOCIETE_NAME');
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>' . $langs->trans('UseShortenerRef') . '</td>';
+print '<td>' . $langs->trans('UseShortenerRefDescription') . '</td>';
+print '<td>';
+print ajax_constantonoff('EASYURL_USE_SHORTENER_REF');
+print '</td></tr>';
+
 print '<tr class="oddeven"><td>' . $langs->trans('UseShaUrl') . '</td>';
 print '<td>' . $langs->trans('UseShaUrlDescription') . '</td>';
 print '<td>';
