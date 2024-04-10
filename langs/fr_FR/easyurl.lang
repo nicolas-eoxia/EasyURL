@@ -36,16 +36,14 @@ SignatureTokenYourlsAPI               = Token de signature
 SignatureTokenYourlsAPIDescription    = Cette option permet de configurer le token de signature d'API YOURLS
 DefaultOriginalUrl                    = URL d'origine par défaut
 DefaultOriginalUrlDescription         = Cette option permet de configurer l'URL d'origine par défaut
-UseMainInfoCompanyName                = Nom de la societe dans l'URL raccourcie
-UseMainInfoCompanyNameDescription     = Cette option permet d'ajouter le nom de la societe dans le raccourcissement des URLs
-UseShortenerRef                       = Ref dans l'URL raccourcie
-UseShortenerRefDescription            = Cette option permet d'ajouter la référence dans le raccourcissement des URLs
 UseShaUrl                             = SHA dans l'URL raccourcie
 UseShaUrlDescription                  = Cette option permet d'ajouter un SHA (8 caractères) dans le raccourcissement des URLs
 AutomaticEasyUrlGeneration            = Génération automatique des URLs raccourcies
 AutomaticEasyUrlGenerationDescription = Crée automatiquement l'URL raccourcie lors de la validation d'un objet <br> (proposition commerciale, commande, facture)
 ManualEasyUrlGeneration               = Génération manuelle des URLs raccourcies
 ManualEasyUrlGenerationDescription    = Ajout d'un bouton pour créer une URL raccourcie sur un objet <br> (proposition commerciale, commande, facture)
+ShortenerSetLabel                     = __MYCOMPANY_NAME__-__REF__-__EASYURL_SHA_8__
+ShortenerSetLabelTitle                = Libellé dans l'URL raccourcie
 
 
 

@@ -75,12 +75,11 @@ function set_easy_url_link(CommonObject $object, string $urlType, string $urlMet
                 break;
         }
 
-        $title  = getDolGlobalInt('EASYURL_USE_MAIN_INFO_SOCIETE_NAME') ? dol_strtolower($conf->global->MAIN_INFO_SOCIETE_NOM) : '';
-        $title .= getDolGlobalInt('EASYURL_USE_MAIN_INFO_SOCIETE_NAME') && getDolGlobalInt('EASYURL_USE_SHORTENER_REF') ? '-' : '';
-        $title .= getDolGlobalInt('EASYURL_USE_SHORTENER_REF') ? dol_strtolower($object->ref) : '';
-        $title .= (getDolGlobalInt('EASYURL_USE_MAIN_INFO_SOCIETE_NAME') || getDolGlobalInt('EASYURL_USE_SHORTENER_REF')) && getDolGlobalInt('EASYURL_USE_SHA_URL') ? '-' : '';
-        $title .= getDolGlobalInt('EASYURL_USE_SHA_URL') ? generate_random_id(8) : '';
-        $title  = dol_sanitizeFileName($title);
+        $substitutionArray = getCommonSubstitutionArray($langs, 0, null, $shortener);
+        complete_substitutions_array($substitutionArray, $langs, $shortener);
+        $shortenerSetLabel = make_substitutions($langs->transnoentities($conf->global->EASYURL_SHORTENER_SET_LABEL), $substitutionArray);
+
+        $title = dol_sanitizeFileName(dol_strtolower(dol_strlen($shortenerSetLabel) > 0 ? $shortenerSetLabel : $langs->transnoentities('ShortenerSetLabel')));
 
         // Init the CURL session
         $ch = curl_init();
