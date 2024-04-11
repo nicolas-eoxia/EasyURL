@@ -42,7 +42,6 @@ function set_easy_url_link(Shortener $shortener, string $urlType, CommonObject $
         require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
         require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
 
-        $shortener->fetch($shortener->id);
         switch ($object->element) {
             case 'propal' :
                 $type = 'proposal';
@@ -85,8 +84,11 @@ function set_easy_url_link(Shortener $shortener, string $urlType, CommonObject $
                 } else {
                     $onlineUrl = getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL');
                 }
+                $shortener->status = $shortener::STATUS_VALIDATED;
                 break;
         }
+
+        $shortener->ref = $shortener->getNextNumRef();
 
         $title  = getDolGlobalInt('EASYURL_USE_MAIN_INFO_SOCIETE_NAME') ? dol_strtolower($conf->global->MAIN_INFO_SOCIETE_NOM) : '';
         $title .= getDolGlobalInt('EASYURL_USE_MAIN_INFO_SOCIETE_NAME') && getDolGlobalInt('EASYURL_USE_SHORTENER_REF') ? '-' : '';
@@ -134,17 +136,13 @@ function set_easy_url_link(Shortener $shortener, string $urlType, CommonObject $
                     }
                 }
             }
-            if ($shortener->status == $shortener::STATUS_DRAFT) {
-                $shortener->status = $shortener::STATUS_VALIDATED;
-            }
             $shortener->label        = $title;
             $shortener->short_url    = $data->shorturl;
             $shortener->original_url = $onlineUrl;
-            $shortener->update($user, true);
 
             require_once TCPDF_PATH . 'tcpdf_barcodes_2d.php';
 
-            $barcode = new TCPDF2DBarcode($shortener->short_url, 'QRCODE,L');
+            $barcode = new TCPDF2DBarcode($shortener->short_url, 'QRCODE,H');
 
             dol_mkdir($conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/');
             $file = $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/' . 'barcode_' . $shortener->ref . '.png';
@@ -152,6 +150,8 @@ function set_easy_url_link(Shortener $shortener, string $urlType, CommonObject $
             $imageData = $barcode->getBarcodePngData();
             $imageData = imagecreatefromstring($imageData);
             imagepng($imageData, $file);
+
+            $shortener->create($user);
             return 1;
         } else {
             setEventMessage($langs->trans('SetEasyURLErrors'), 'errors');

@@ -122,10 +122,8 @@ class InterfaceEasyURLTriggers extends DolibarrTriggers
 
                     $shortener = new Shortener($this->db);
 
-                    $shortener->ref     = $shortener->getNextNumRef();
                     $shortener->methode = 'yourls';
 
-                    $shortener->create($user);
                     set_easy_url_link($shortener, 'signature', $object);
                 }
                 break;
@@ -136,10 +134,8 @@ class InterfaceEasyURLTriggers extends DolibarrTriggers
 
                     $shortener = new Shortener($this->db);
 
-                    $shortener->ref     = $shortener->getNextNumRef();
                     $shortener->methode = 'yourls';
 
-                    $shortener->create($user);
                     set_easy_url_link($shortener, 'payment', $object);
                 }
                 break;
