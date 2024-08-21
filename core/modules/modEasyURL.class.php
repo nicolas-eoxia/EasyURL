@@ -427,7 +427,7 @@ class modEasyURL extends DolibarrModules
 
                                 $result = $shortener->fetch('', '', ' AND short_url = "' . $object->array_options['options_easy_url_' . $urlType  . '_link'] . '"');
                                 if ($result == 0) {
-                                    $shortenerData = get_easy_url_link($object->array_options['options_easy_url_' . $urlType  . '_link'], $urlType);
+                                    $shortenerData = get_easy_url_link($object->array_options['options_easy_url_' . $urlType  . '_link']);
 
                                     $shortener->ref          = $shortener->getNextNumRef();
                                     $shortener->ref_ext      = 'easy_url_' . $urlType  . '_link';

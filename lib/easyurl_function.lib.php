@@ -164,16 +164,14 @@ function set_easy_url_link(Shortener $shortener, string $urlType, CommonObject $
  * get easy url link
  *
  * @param  string     $shortUrl  Short url
- * @param  string     $urlType   Url type
  * @return int|object $data      0 < on error, data
  */
-function get_easy_url_link(string $shortUrl, string $urlType)
+function get_easy_url_link(string $shortUrl)
 {
     global $conf;
 
-    $useOnlinePayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-    $checkConf        = getDolGlobalString('EASYURL_URL_YOURLS_API') && getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API');
-    if ((($urlType == 'payment' && $useOnlinePayment) || $urlType == 'signature') && $checkConf) {
+    $checkConf = getDolGlobalString('EASYURL_URL_YOURLS_API') && getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API');
+    if ($checkConf) {
         // Init the CURL session
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $conf->global->EASYURL_URL_YOURLS_API);
