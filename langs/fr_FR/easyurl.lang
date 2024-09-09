@@ -68,6 +68,7 @@ GetEasyURLErrors     = Erreur : URL raccourcie non trouvée
 
 # Data - Donnée
 GenerateUrlManagement           = Gestion de la génération des raccourcissements d'URLs
+GeneratedExport                 = Export déjà générés
 NbUrl                           = Nombre d'URL
 NbUrlDescription                = Cette option permet de choisir le nombre d'URL à générée
 OriginalUrl                     = URL d'origine
@@ -80,7 +81,16 @@ UrlMethodeDescription           = Cette option permet de choisir la méthode d'A
 GenerateUrlSuccess              = Génération réussie des %d raccourcissements d'URLs
 OriginalUrlFail                 = Erreur(s) possible(s) : <br> - Nombre d'URL est vide <br> - l'URL d'origine est vide <br> - l'URL d'origine par défaut n'as pas été configurée
 DefaultOriginalUrlConfiguration = Vous n'avez pas configuré d'URL d'origine par défaut, veuillez cliquer ici pour vous rendre sur la page de configuration
-
+Success                         = Succès
+ExportId                        = Id Export
+ExportNumber                    = Nombre d'URL générées
+ExportStart                     = ID début URL
+ExportEnd                       = ID fin URL
+ExportDate                      = Date export
+ExportOrigin                    = URL d'origine
+ExportConsume                   = Nombre d'URL consommé
+ExportGenerating                = Export en cours de %d urls !
+ExportSuccess                   = Export réussi de %d urls !
 
 #
 # Shortener - Raccourcissement d'URL

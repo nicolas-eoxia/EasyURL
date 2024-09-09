@@ -1,4 +1,4 @@
--- Copyright (C) 2021-2023 EVARISK <technique@evarisk.com>
+-- Copyright (C) 2021-2024 EVARISK <technique@evarisk.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,21 +14,22 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 CREATE TABLE llx_easyurl_shortener(
-  rowid          integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  ref            varchar(128) DEFAULT '(PROV)' NOT NULL,
-  ref_ext        varchar(128),
-  entity         integer DEFAULT 1 NOT NULL,
-  date_creation  datetime NOT NULL,
-  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  import_key     varchar(14),
-  status         integer NOT NULL,
-  label          varchar(255),
-  short_url      text,
-  original_url   text,
-  type           varchar(255),
-  methode        varchar(255),
-  element_type   varchar(255),
-  fk_element     integer,
-  fk_user_creat  integer NOT NULL,
-  fk_user_modif  integer
+  rowid               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  ref                 varchar(128) DEFAULT '(PROV)' NOT NULL,
+  ref_ext             varchar(128),
+  entity              integer DEFAULT 1 NOT NULL,
+  date_creation       datetime NOT NULL,
+  tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  import_key          varchar(14),
+  status              integer NOT NULL,
+  label               varchar(255),
+  short_url           text,
+  original_url        text,
+  type                varchar(255),
+  methode             varchar(255),
+  element_type        varchar(255),
+  fk_element          integer,
+  fk_export_shortener integer,
+  fk_user_creat       integer NOT NULL,
+  fk_user_modif       integer
 ) ENGINE=innodb;
