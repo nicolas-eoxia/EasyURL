@@ -197,7 +197,7 @@ print '<td>' . $langs->trans('ExportEnd') . '</td>';
 print '<td>' . $langs->trans('ExportDate') . '</td>';
 print '<td>' . $langs->trans('ExportOrigin') . '</td>';
 print '<td>' . $langs->trans('ExportConsume') . '</td>';
-print '<td></td>';
+print '<td>' . $langs->trans('Action') . '</td>';
 print '</tr>';
 
 $exportShortenerDocument  = new ExportShortenerDocument($db);
@@ -213,26 +213,29 @@ if (is_array($exportShortenerDocuments) && !empty($exportShortenerDocuments)) {
 
         $shorteners = $shortener->fetchAll('', '', $data['number_shortener_url'], 0, ['customsql' => 't.rowid >=' . $data['first_shortener_id']]);
 
-        print '<tr class="oddeven">';
-        print '<td>' . $exportShortenerDocument->ref . '</td>';
-        print '<td>' . $data['number_shortener_url'] . '</td>';
-        print '<td>' . $data['first_shortener_id'] . '</td>';
-        print '<td>' . $data['last_shortener_id'] . '</td>';
-        print '<td>' . dol_print_date($exportShortenerDocument->date_creation, 'dayhour', 'tzuser') . '</td>';
-        print '<td>' . dol_print_url($data['original_url'], '_blank', 64, 1) . '</td>';
-        print '<td>' . count(array_filter($shorteners, function ($elem) {return $elem->status == 0;})) . '</td>';
+        if (is_array($shorteners) && !empty($shorteners)) {
+            print '<tr class="oddeven">';
+            print '<td>' . $exportShortenerDocument->ref . '</td>';
+            print '<td>' . $data['number_shortener_url'] . '</td>';
+            print '<td>' . $data['first_shortener_id'] . '</td>';
+            print '<td>' . $data['last_shortener_id'] . '</td>';
+            print '<td>' . dol_print_date($exportShortenerDocument->date_creation, 'dayhour', 'tzuser') . '</td>';
+            print '<td>' . dol_print_url($data['original_url'], '_blank', 64, 1) . '</td>';
+            print '<td>' . count(array_filter($shorteners, function ($elem) {return $elem->status == Shortener::STATUS_ASSIGN;})) . '</td>';
 
-        $uploadDir = $conf->easyurl->multidir_output[$conf->entity ?? 1];
-        $fileDir = $uploadDir . '/' . $exportShortenerDocument->element;
-        if (dol_is_file($fileDir . '/' . $exportShortenerDocument->last_main_doc)) {
-            $documentUrl = DOL_URL_ROOT . '/document.php';
-            $fileUrl = $documentUrl . '?modulepart=easyurl&file=' . urlencode($exportShortenerDocument->element . '/' . $exportShortenerDocument->last_main_doc);
-            print '<td><div><a class="marginleftonly" href="' . $fileUrl . '" download>' . img_picto($langs->trans('File') . ' : ' . $exportShortenerDocument->last_main_doc, 'fa-file-csv') . '</a></div></td>';
+            $uploadDir = $conf->easyurl->multidir_output[$conf->entity ?? 1];
+            $fileDir = $uploadDir . '/' . $exportShortenerDocument->element;
+            if (dol_is_file($fileDir . '/' . $exportShortenerDocument->last_main_doc)) {
+                $documentUrl = DOL_URL_ROOT . '/document.php';
+                $fileUrl = $documentUrl . '?modulepart=easyurl&file=' . urlencode($exportShortenerDocument->element . '/' . $exportShortenerDocument->last_main_doc);
+                print '<td><div><a class="marginleftonly" href="' . $fileUrl . '" download>' . img_picto($langs->trans('File') . ' : ' . $exportShortenerDocument->last_main_doc, 'fa-file-csv') . '</a></div></td>';
+            }
+            print '</tr>';
         }
-        print '</tr>';
     }
+} else {
+    print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans('NoRecordFound') . '</span></td></tr>';
 }
-print '</table>';
 
 // End of page
 llxFooter();

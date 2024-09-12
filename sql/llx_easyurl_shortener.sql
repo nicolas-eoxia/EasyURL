@@ -29,7 +29,6 @@ CREATE TABLE llx_easyurl_shortener(
   methode             varchar(255),
   element_type        varchar(255),
   fk_element          integer,
-  fk_export_shortener integer,
   fk_user_creat       integer NOT NULL,
   fk_user_modif       integer
 ) ENGINE=innodb;

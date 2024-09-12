@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2024 EVARISK <technique@evarisk.com>
+/* Copyright (C) 2024 EVARISK <technique@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 /**
  * \file    class/exportshortenerdocument.class.php
  * \ingroup easyurl
- * \brief   This file is a CRUD class file for ExportShortener (Create/Read/Update/Delete)
+ * \brief   This file is a CRUD class file for ExportShortenerDocument (Create/Read/Update/Delete)
  */
 
 // Load Saturne libraries
 require_once __DIR__ . '/../../saturne/class/saturnedocuments.class.php';
 
 /**
- * Class for ExportShortener
+ * Class for ExportShortenerDocument
  */
 class ExportShortenerDocument extends SaturneDocuments
 {
@@ -37,10 +37,10 @@ class ExportShortenerDocument extends SaturneDocuments
     /**
      * @var string Element type of object
      */
-    public $element = 'export_shortener_document';
+    public $element = 'exportshortenerdocument';
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param DoliDb $db Database handler
      */
@@ -65,15 +65,15 @@ class ExportShortenerDocument extends SaturneDocuments
         $shorteners = $shortener->fetchAll('', '', $data['number_shortener_url'], 0, ['customsql' => 't.rowid >=' . $data['first_shortener_id']]);
 
         if (is_array($shorteners) && !empty($shorteners)) {
-            $upload_dir = $conf->easyurl->multidir_output[$conf->entity] . '/' . $this->element;
-            if (!dol_is_dir($upload_dir)) {
-                dol_mkdir($upload_dir);
+            $uploadDir = $conf->easyurl->multidir_output[$conf->entity] . '/' . $this->element;
+            if (!dol_is_dir($uploadDir)) {
+                dol_mkdir($uploadDir);
             }
             $fileName = dol_print_date(dol_now(), 'dayhourxcard') . '_' . $this->element . '.csv';
-            $fp       = fopen($upload_dir . '/' . $fileName, 'w');
-            fputcsv($fp, [1 => 'ref' . ';' . 'label' . ';' . 'original_url' . ';' . 'short_url']);
-            foreach ($shorteners as $key => $shortener) {
-                fputcsv($fp, [$key => $shortener->ref . ';' . str_replace(' ', '-', $shortener->label) . ';' . $shortener->original_url . ';' . $shortener->short_url]);
+            $fp       = fopen($uploadDir . '/' . $fileName, 'w');
+            fputcsv($fp, ['ref', 'label', 'original_url', 'short_url']);
+            foreach ($shorteners as $shortener) {
+                fputcsv($fp, [$shortener->ref, $shortener->label, $shortener->original_url, $shortener->short_url]);
             }
             fclose($fp);
             $this->last_main_doc = $fileName;
