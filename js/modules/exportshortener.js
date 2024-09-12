@@ -22,6 +22,8 @@
  * \brief   JavaScript exportshortener file for module EasyURL
  */
 
+'use strict'
+
 /**
  * Init exportshortener JS
  *
@@ -59,11 +61,10 @@ window.easyurl.exportshortener.init = function() {
  * @returns {void}
  */
 window.easyurl.exportshortener.event = function() {
-  $(document).on('click', '#generate-url-from .button-save', window.easyurl.exportshortener.buttonSave);
 };
 
 /**
- * ExportShortener button save
+ * ExportShortener create shortener
  *
  * @memberof EasyURL_ExportShortener
  *
@@ -72,48 +73,23 @@ window.easyurl.exportshortener.event = function() {
  *
  * @returns {void}
  */
-window.easyurl.exportshortener.buttonSave = function(e) {
-  e.preventDefault();
-  let form = new FormData($('#generate-url-from')[0]);
-  form.set('current_nb', '0');
-  let url = new URL(document.URL);
-  url.searchParams.append('action', form.get('action'));
-  url.searchParams.append('token', form.get('token'));
+window.easyurl.exportshortener.generateExport = function(nbUrl) {
 
-  window.easyurl.exportshortener.createLink(form, url, 0);
-}
+  let token          = window.saturne.toolbox.getToken();
+  let querySeparator = window.saturne.toolbox.getQuerySeparator(document.URL);
 
-/**
- * ExportShortener create link
- *
- * @memberof EasyURL_ExportShortener
- *
- * @since   1.1.0
- * @version 1.1.0
- *
- * @returns {void}
- */
-window.easyurl.exportshortener.createLink = function(form, url, current) {
-  form.set('current_nb', current.toString());
   $.ajax({
     method: 'POST',
-    url: url.toString(),
-    data: JSON.stringify(Object.fromEntries(form)),
+    url: document.URL + querySeparator + 'action=generate_export&nb_url=' + nbUrl + '&token=' + token,
     processData: false,
+    contentType: false,
     success: function (resp) {
-      if (current == 0) {
-        $('.tab-export tr:nth-child(1)').after($(resp).find('.tab-export tr:nth-child(2)'));
-        let newFormData = new FormData($(resp).find('#generate-url-from')[0]);
-        form.set('export_id', newFormData.get('export_id'));
-      } else {
-        $('.tab-export tr:nth-child(2)').replaceWith($(resp).find('.tab-export tr:nth-child(2)'));
-      }
-      $('.global-infos').replaceWith($(resp).find('.global-infos'));
-      if (current < form.get('nb_url') - 1) {
-        window.easyurl.exportshortener.createLink(form, url, current + 1);
-      }
+      window.saturne.loader.remove($('#generate-url-from .button-save'));
+      $('#global-infos').replaceWith($(resp).find('#global-infos'));
+      $('#shortener-export-table').replaceWith($(resp).find('#shortener-export-table'));
     }
   });
 }
+
 
 

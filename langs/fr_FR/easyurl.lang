@@ -89,8 +89,9 @@ ExportEnd                       = ID fin URL
 ExportDate                      = Date export
 ExportOrigin                    = URL d'origine
 ExportConsume                   = Nombre d'URL consommé
-ExportGenerating                = Export en cours de %d urls !
-ExportSuccess                   = Export réussi de %d urls !
+ExportGenerating                = Export en cours de %d URLs !
+ExportSuccess                   = Export réussi des URLs !
+ExportError                     = Erreur lors de la génération de l'URL %d;
 
 #
 # Shortener - Raccourcissement d'URL

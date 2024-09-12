@@ -60,20 +60,25 @@ class ExportShortenerDocument extends SaturneDocuments
 
         require_once __DIR__ . '/../class/shortener.class.php';
 
+        $data       = json_decode($this->json, true);
         $shortener  = new Shortener($this->db);
-        $shorteners = $shortener->fetchAll('', '', 0, 0, ['t.fk_export_shortener' => $this->id]);
+        $shorteners = $shortener->fetchAll('', '', $data['number_shortener_url'], 0, ['customsql' => 't.rowid >=' . $data['first_shortener_id']]);
 
-        $upload_dir = $conf->easyurl->multidir_output[$conf->entity] . '/' . $this->element;
-        dol_mkdir($upload_dir);
-        $fileName   = dol_print_date(dol_now(), 'dayhourxcard') . '_' . $this->element . '.csv';
-        $fp         = fopen($upload_dir . '/' . $fileName, 'w');
-        fputcsv($fp, [1 => 'ref' . ';' . 'label' . ';' . 'original_url' . ';' . 'short_url']);
-        foreach ($shorteners as $key => $link) {
-            fputcsv($fp, [$key => $link->ref . ';' . $link->label . ';' . $link->original_url . ';' . $link->short_url]);
+        if (is_array($shorteners) && !empty($shorteners)) {
+            $upload_dir = $conf->easyurl->multidir_output[$conf->entity] . '/' . $this->element;
+            if (!dol_is_dir($upload_dir)) {
+                dol_mkdir($upload_dir);
+            }
+            $fileName = dol_print_date(dol_now(), 'dayhourxcard') . '_' . $this->element . '.csv';
+            $fp       = fopen($upload_dir . '/' . $fileName, 'w');
+            fputcsv($fp, [1 => 'ref' . ';' . 'label' . ';' . 'original_url' . ';' . 'short_url']);
+            foreach ($shorteners as $key => $shortener) {
+                fputcsv($fp, [$key => $shortener->ref . ';' . str_replace(' ', '-', $shortener->label) . ';' . $shortener->original_url . ';' . $shortener->short_url]);
+            }
+            fclose($fp);
+            $this->last_main_doc = $fileName;
+            $this->update($user);
         }
-        fclose($fp);
-        $this->last_main_doc = $fileName;
-        $this->update($user);
     }
 
 }
