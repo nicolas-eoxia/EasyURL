@@ -22,7 +22,7 @@
  * \brief   JavaScript exportshortener file for module EasyURL
  */
 
-'use strict'
+'use strict';
 
 /**
  * Init exportshortener JS
@@ -64,7 +64,7 @@ window.easyurl.exportshortener.event = function() {
 };
 
 /**
- * ExportShortener create shortener
+ * ExportShortener generate export
  *
  * @memberof EasyURL_ExportShortener
  *
@@ -74,7 +74,6 @@ window.easyurl.exportshortener.event = function() {
  * @returns {void}
  */
 window.easyurl.exportshortener.generateExport = function(nbUrl) {
-
   let token          = window.saturne.toolbox.getToken();
   let querySeparator = window.saturne.toolbox.getQuerySeparator(document.URL);
 
@@ -85,11 +84,8 @@ window.easyurl.exportshortener.generateExport = function(nbUrl) {
     contentType: false,
     success: function (resp) {
       window.saturne.loader.remove($('#generate-url-from .button-save'));
-      $('#global-infos').replaceWith($(resp).find('#global-infos'));
+      $('#notice-infos').replaceWith($(resp).find('#notice-infos'));
       $('#shortener-export-table').replaceWith($(resp).find('#shortener-export-table'));
     }
   });
-}
-
-
-
+};

@@ -221,8 +221,8 @@ window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
     success: function (resp) {
       let success = $(resp).find('input[name="success"]').val();
 
-      $('#global-infos').replaceWith($(resp).find('#global-infos'));
-      if (success) {
+      $('#notice-infos').replaceWith($(resp).find('#notice-infos'));
+      if (success == 'true') {
         if (current < nbUrl) {
           window.easyurl.shortener.createShortener(form, ++current, nbUrl);
         } else {
@@ -231,4 +231,4 @@ window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
       }
     }
   });
-}
+};

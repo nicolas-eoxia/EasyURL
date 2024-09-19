@@ -91,7 +91,7 @@ ExportOrigin                    = URL d'origine
 ExportConsume                   = Nombre d'URL consommé
 ExportGenerating                = Export en cours de %d URLs !
 ExportSuccess                   = Export réussi des URLs !
-ExportError                     = Erreur lors de la génération de l'URL %d;
+ExportError                     = Erreur lors de la génération de l'URL %d
 
 #
 # Shortener - Raccourcissement d'URL

@@ -133,12 +133,12 @@ if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
 
 if (GETPOSTISSET('success')) {
     if (GETPOST('successType') == 'shortener') {
-        print saturne_show_notice($langs->transnoentities(GETPOST('success') ? 'Success' : 'Error'), '<div class="wpeo-loader">' . $langs->transnoentities(GETPOST('success') ? 'ExportGenerating' : 'ExportError', GETPOST('nb_url')) . '<span class="loader-spin"></span></div>', GETPOST('success') ? 'success' : 'error', 1, 1, '', ['id' => 'global-infos']);
+        print saturne_show_notice($langs->transnoentities(GETPOST('success', 'int') ? 'Success' : 'Error'), '<div class="wpeo-loader">' . $langs->transnoentities(GETPOST('success', 'int') ? 'ExportGenerating' : 'ExportError', GETPOST('nb_url')) . '<span class="loader-spin"></span></div>', GETPOST('success', 'int') ? 'success' : 'error', 'notice-infos', true);
     } elseif (GETPOST('successType') == 'export') {
-        print saturne_show_notice($langs->transnoentities('Success'), $langs->transnoentities('ExportSuccess'), 'success', 1, 1, '', ['id' => 'global-infos']);
+        print saturne_show_notice($langs->transnoentities('Success'), $langs->transnoentities('ExportSuccess'), 'success', 'notice-infos', true);
     }
 } else {
-    print saturne_show_notice('', '', '', 0, 0, '', ['id' => 'global-infos']);
+    print saturne_show_notice();
 }
 print load_fiche_titre($langs->trans('GenerateUrlManagement'), '', '');
 
