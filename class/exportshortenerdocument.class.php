@@ -69,7 +69,7 @@ class ExportShortenerDocument extends SaturneDocuments
             if (!dol_is_dir($uploadDir)) {
                 dol_mkdir($uploadDir);
             }
-            $fileName = dol_print_date(dol_now(), 'dayhourxcard') . '_' . $this->element . '.csv';
+            $fileName = dol_print_date(dol_now(), 'dayhourlog') . '_' . $this->element . '.csv';
             $fp       = fopen($uploadDir . '/' . $fileName, 'w');
             fputcsv($fp, ['ref', 'label', 'original_url', 'short_url']);
             foreach ($shorteners as $shortener) {
