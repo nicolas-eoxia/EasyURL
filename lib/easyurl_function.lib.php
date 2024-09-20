@@ -106,7 +106,7 @@ function set_easy_url_link(CommonObject $object, string $urlType, string $urlMet
         // Do something with the result
         $data = json_decode($data);
 
-        if ($data->status == 'success') {
+        if ($data != null && $data->status == 'success') {
             if ($urlType != 'none') {
                 $object->array_options['options_easy_url_' . $urlType . '_link'] = $data->shorturl;
                 $object->updateExtraField('easy_url_' . $urlType . '_link');
@@ -156,25 +156,24 @@ function get_easy_url_link(CommonObject $object, string $urlType): int
 
         // Init the CURL session
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $conf->global->EASYURL_URL_YOURLS_API);
+        curl_setopt($ch, CURLOPT_URL, getDolGlobalString('EASYURL_URL_YOURLS_API'));
         curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
         curl_setopt($ch, CURLOPT_POSTFIELDS, [               // Data to POST
             'action'    => 'url-stats',
-            'signature' => $conf->global->EASYURL_SIGNATURE_TOKEN_YOURLS_API,
+            'signature' => getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API'),
             'format'    => 'json',
             'shorturl'  => $object->array_options['options_easy_url_' . $urlType . '_link']
         ]);
 
         // Fetch and return content
-        $data = curl_exec($ch);
+        curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        // Do something with the result
-        $data = json_decode($data);
-        return $data->statusCode == 200 ? 1 : 0;
+        return $statusCode == 200;
     } else {
         return -1;
     }

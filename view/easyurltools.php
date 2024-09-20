@@ -140,6 +140,15 @@ if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
         </div>
     </div>
 <?php endif;
+if (!getDolGlobalString('EASYURL_URL_YOURLS_API') || !getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API')) : ?>
+    <div class="wpeo-notice notice-warning">
+        <div class="notice-content">
+            <div class="notice-title">
+                <a href="<?php echo dol_buildpath('/custom/easyurl/admin/setup.php', 1); ?>"><strong><?php echo $langs->trans('ApiCredentialsNotCongirate'); ?></strong></a>
+            </div>
+        </div>
+    </div>
+<?php endif;
 
 $translations = [
     'ExportGenerating' => $langs->transnoentities('ExportGenerating'),

@@ -68,6 +68,32 @@ if ($action == 'set_config') {
     if (dol_strlen($signatureTokenYourlsAPI) > 0) {
         dolibarr_set_const($db, 'EASYURL_SIGNATURE_TOKEN_YOURLS_API', $signatureTokenYourlsAPI, 'chaine', 0, '', $conf->entity);
     }
+
+    if (dol_strlen($URLYourlsAPI) > 0 && dol_strlen($signatureTokenYourlsAPI) > 0) {
+
+        // Init the CURL session
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, GETPOST('url_yourls_api'));
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [               // Data to POST
+            'signature' => getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API'),
+            'format'    => 'json'
+        ]);
+
+        $data = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // 400 when no actions set and credentials ok
+        if ($statusCode != 400) {
+            setEventMessage('WarningApiCredentialsIncorrect', 'warnings');
+        }
+    }
+
     dolibarr_set_const($db, 'EASYURL_DEFAULT_ORIGINAL_URL', $defaultOriginalURL, 'chaine', 0, '', $conf->entity);
 
     setEventMessage('SavedConfig');
