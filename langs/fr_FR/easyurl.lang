@@ -92,7 +92,7 @@ ExportDate                      = Date export
 ExportOrigin                    = URL d'origine
 ExportConsume                   = Nombre d'URL consommé
 ExportGenerating                = Export en cours de
-ExportSuccess                   = Export réussi des URLs !
+ExportSuccess                   = URL(s) exportées avec succès !
 ExportError                     = Erreur lors de la génération de l'URL
 
 #
