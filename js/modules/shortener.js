@@ -221,13 +221,15 @@ window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
     success: function (resp) {
       let success = $(resp).find('input[name="success"]').val();
 
-      $('#notice-infos').replaceWith($(resp).find('#notice-infos'));
       if (success == 'true') {
         if (current < nbUrl) {
+          window.saturne.notice.showNotice('notice-infos', 'Success', 'ExportGenerating ' + current + ' URLs !', 'success');
           window.easyurl.shortener.createShortener(form, ++current, nbUrl);
         } else {
           window.easyurl.exportshortener.generateExport(nbUrl);
         }
+      } else {
+        window.saturne.notice.showNotice('notice-infos', 'Error', 'ExportError ' + current, 'error');
       }
     }
   });

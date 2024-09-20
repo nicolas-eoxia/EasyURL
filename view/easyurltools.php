@@ -57,7 +57,7 @@ saturne_check_access($permissionToRead);
  */
 
 if ($action == 'generate_url' && $permissionToAdd) {
-    $urlParameters = '';
+    $urlParametersOut = '';
     $data = json_decode(file_get_contents('php://input'), true);
     if (!empty($data)) {
         $urlMethode    = $data['url_methode'];
@@ -79,13 +79,15 @@ if ($action == 'generate_url' && $permissionToAdd) {
             // UrlType : none because we want mass generation url (all can be use but need to change this code)
             $result = set_easy_url_link($shortener, 'none', $urlMethode);
             if (!empty($result) && is_object($result)) {
-                $urlParameters .= '?success=true&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
+                $urlParametersOut .= '?success=false&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
             } else {
-                $urlParameters .= '?success=false&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
+                $urlParametersOut .= '?success=true&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
             }
+        } else {
+            $urlParametersOut .= '?success=false&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
         }
     }
-    header('Location: ' . $_SERVER['PHP_SELF'] . $urlParameters);
+    header('Location: ' . $_SERVER['PHP_SELF'] . $urlParametersOut);
     exit;
 }
 
@@ -131,16 +133,17 @@ if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
     </div>
 <?php endif;
 
-if (GETPOSTISSET('success')) {
-    if (GETPOST('successType') == 'shortener') {
-        print saturne_show_notice($langs->transnoentities(GETPOST('success', 'int') ? 'Success' : 'Error'), '<div class="wpeo-loader">' . $langs->transnoentities(GETPOST('success', 'int') ? 'ExportGenerating' : 'ExportError', GETPOST('nb_url')) . '<span class="loader-spin"></span></div>', GETPOST('success', 'int') ? 'success' : 'error', 'notice-infos', true);
-    } elseif (GETPOST('successType') == 'export') {
-        print saturne_show_notice($langs->transnoentities('Success'), $langs->transnoentities('ExportSuccess'), 'success', 'notice-infos', true);
-    }
-} else {
-    print saturne_show_notice();
-}
-print load_fiche_titre($langs->trans('GenerateUrlManagement'), '', '');
+
+
+$translations = [
+    'ExportGenerating'  => $langs->transnoentities('ExportGenerating'),
+    'ExportError'       => $langs->transnoentities('ExportError'),
+    'ExportSuccess'     => $langs->transnoentities('ExportSuccess'),
+    'Success'           => $langs->transnoentities('Success'),
+    'Error'             => $langs->transnoentities('Error'),
+];
+print saturne_show_notice('', '', 'success', 'notice-infos', 0, 1, '', $translations);
+
 
 print '<form name="generate-url-from" id="generate-url-from" action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';

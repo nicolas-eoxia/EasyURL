@@ -83,8 +83,8 @@ window.easyurl.exportshortener.generateExport = function(nbUrl) {
     processData: false,
     contentType: false,
     success: function (resp) {
+      window.saturne.notice.showNotice('notice-infos', 'Success', 'ExportSuccess', 'success');
       window.saturne.loader.remove($('#generate-url-from .button-save'));
-      $('#notice-infos').replaceWith($(resp).find('#notice-infos'));
       $('#shortener-export-table').replaceWith($(resp).find('#shortener-export-table'));
     }
   });
