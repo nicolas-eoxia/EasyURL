@@ -44,6 +44,10 @@ saturne_load_langs();
 // Get parameters
 $action = (GETPOSTISSET('action') ? GETPOST('action', 'aZ09') : 'view');
 
+// Initialize technical objects
+$shortener               = new Shortener($db);
+$exportShortenerDocument = new ExportShortenerDocument($db);
+
 // Initialize view objects
 $form = new Form($db);
 
@@ -65,7 +69,6 @@ if ($action == 'generate_url' && $permissionToAdd) {
         $urlParameters = $data['url_parameters'];
 
         if (dol_strlen($originalUrl) > 0 || dol_strlen(getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) > 0) {
-            $shortener = new Shortener($db);
             $shortener->ref = $shortener->getNextNumRef();
             if (dol_strlen($originalUrl) > 0) {
                 $shortener->original_url = $originalUrl . $urlParameters;
@@ -92,11 +95,15 @@ if ($action == 'generate_url' && $permissionToAdd) {
 }
 
 if ($action == 'generate_export' && $permissionToAdd) {
-    $export = new ExportShortenerDocument($db);
+    $numberingModules  = [$exportShortenerDocument->module . 'documents/' . $exportShortenerDocument->element  => getDolGlobalString('EASYURL_EXPORTSHORTENERDOCUMENT_ADDON')];
+    list($refModName)  = saturne_require_objects_mod($numberingModules, 'easyurl');
+    $objectDocumentRef = $refModName->getNextValue($exportShortenerDocument);
 
-    $export->create($user);
+    $exportShortenerDocument->ref = $objectDocumentRef;
+
+    $exportShortenerDocument->create($user);
+
     $nbUrl      = GETPOST('nb_url');
-    $shortener  = new Shortener($db);
     $shorteners = $shortener->fetchAll('DESC', 'rowid', $nbUrl);
     if (is_array($shorteners) && !empty($shorteners)) {
         $data = [
@@ -105,8 +112,9 @@ if ($action == 'generate_export' && $permissionToAdd) {
             'first_shortener_id'   => end($shorteners)->id,
             'number_shortener_url' => $nbUrl
         ];
-        $export->json = json_encode($data);
-        $export->generateFile();
+        $exportShortenerDocument->ref  = $objectDocumentRef;
+        $exportShortenerDocument->json = json_encode($data);
+        $exportShortenerDocument->generateFile();
     }
     header('Location: ' . $_SERVER['PHP_SELF'] . '?success=true&successType=export');
     exit;
@@ -134,11 +142,11 @@ if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
 <?php endif;
 
 $translations = [
-    'ExportGenerating'  => $langs->transnoentities('ExportGenerating'),
-    'ExportError'       => $langs->transnoentities('ExportError'),
-    'ExportSuccess'     => $langs->transnoentities('ExportSuccess'),
-    'Success'           => $langs->transnoentities('Success'),
-    'Error'             => $langs->transnoentities('Error'),
+    'ExportGenerating' => $langs->transnoentities('ExportGenerating'),
+    'ExportError'      => $langs->transnoentities('ExportError'),
+    'ExportSuccess'    => $langs->transnoentities('ExportSuccess'),
+    'Success'          => $langs->transnoentities('Success'),
+    'Error'            => $langs->transnoentities('Error'),
 ];
 print saturne_show_notice('', '', 'success', 'notice-infos', 0, 1, '', $translations);
 
@@ -202,19 +210,12 @@ print '<td>' . $langs->trans('ExportConsume') . '</td>';
 print '<td>' . $langs->trans('Action') . '</td>';
 print '</tr>';
 
-$exportShortenerDocument  = new ExportShortenerDocument($db);
 $exportShortenerDocuments = $exportShortenerDocument->fetchAll('DESC', 'rowid', 0, 0, ['customsql' => 't.type="' . $exportShortenerDocument->element . '"']);
-
 if (is_array($exportShortenerDocuments) && !empty($exportShortenerDocuments)) {
-
-    $shortener = new Shortener($db);
-
     foreach ($exportShortenerDocuments as $exportShortenerDocument) {
-
         $data = json_decode($exportShortenerDocument->json, true);
 
         $shorteners = $shortener->fetchAll('', '', $data['number_shortener_url'], 0, ['customsql' => 't.rowid >=' . $data['first_shortener_id']]);
-
         if (is_array($shorteners) && !empty($shorteners)) {
             print '<tr class="oddeven">';
             print '<td>' . $exportShortenerDocument->ref . '</td>';
@@ -226,10 +227,10 @@ if (is_array($exportShortenerDocuments) && !empty($exportShortenerDocuments)) {
             print '<td>' . count(array_filter($shorteners, function ($elem) {return $elem->status == Shortener::STATUS_ASSIGN;})) . '</td>';
 
             $uploadDir = $conf->easyurl->multidir_output[$conf->entity ?? 1];
-            $fileDir = $uploadDir . '/' . $exportShortenerDocument->element;
+            $fileDir   = $uploadDir . '/' . $exportShortenerDocument->element;
             if (dol_is_file($fileDir . '/' . $exportShortenerDocument->last_main_doc)) {
                 $documentUrl = DOL_URL_ROOT . '/document.php';
-                $fileUrl = $documentUrl . '?modulepart=easyurl&file=' . urlencode($exportShortenerDocument->element . '/' . $exportShortenerDocument->last_main_doc);
+                $fileUrl     = $documentUrl . '?modulepart=easyurl&file=' . urlencode($exportShortenerDocument->element . '/' . $exportShortenerDocument->last_main_doc);
                 print '<td><div><a class="marginleftonly" href="' . $fileUrl . '" download>' . img_picto($langs->trans('File') . ' : ' . $exportShortenerDocument->last_main_doc, 'fa-file-csv') . '</a></div></td>';
             }
             print '</tr>';

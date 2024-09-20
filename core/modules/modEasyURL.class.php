@@ -185,6 +185,9 @@ class modEasyURL extends DolibarrModules
             // CONST SHORTENER
             $i++ => ['EASYURL_SHORTENER_ADDON', 'chaine', 'mod_shortener_standard', '', 0, 'current'],
 
+            // CONST EXPORT SHORTENER DOCUMENT
+            $i++ => ['EASYURL_EXPORTSHORTENERDOCUMENT_ADDON', 'chaine', 'mod_exportshortenerdocument_standard', '', 0, 'current'],
+
             // CONST DOLIBARR
             $i++ => ['CONTRACT_ALLOW_ONLINESIGN', 'integer', 1, '', 0, 'current'],
             $i   => ['FICHINTER_ALLOW_ONLINE_SIGN', 'integer', 1, '', 0, 'current']
