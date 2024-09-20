@@ -32,6 +32,7 @@ if (file_exists('../easyurl.main.inc.php')) {
 
 // Load EasyURL libraries
 require_once __DIR__ . '/../class/shortener.class.php';
+require_once __DIR__ . '/../class/exportshortenerdocument.class.php';
 require_once __DIR__ . '/../lib/easyurl_function.lib.php';
 
 // Global variables definitions
@@ -56,13 +57,14 @@ saturne_check_access($permissionToRead);
  */
 
 if ($action == 'generate_url' && $permissionToAdd) {
-    $error         = 0;
-    $urlMethode    = GETPOST('url_methode');
-    $NbUrl         = GETPOST('nb_url');
-    $originalUrl   = GETPOST('original_url');
-    $urlParameters = GETPOST('url_parameters');
-    if ((dol_strlen($originalUrl) > 0 || dol_strlen(getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) > 0) && $NbUrl > 0)  {
-        for ($i = 1; $i <= $NbUrl; $i++) {
+    $urlParametersOut = '';
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (!empty($data)) {
+        $urlMethode    = $data['url_methode'];
+        $originalUrl   = $data['original_url'];
+        $urlParameters = $data['url_parameters'];
+
+        if (dol_strlen($originalUrl) > 0 || dol_strlen(getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) > 0) {
             $shortener = new Shortener($db);
             $shortener->ref = $shortener->getNextNumRef();
             if (dol_strlen($originalUrl) > 0) {
@@ -77,17 +79,36 @@ if ($action == 'generate_url' && $permissionToAdd) {
             // UrlType : none because we want mass generation url (all can be use but need to change this code)
             $result = set_easy_url_link($shortener, 'none', $urlMethode);
             if (!empty($result) && is_object($result)) {
-                setEventMessage($result->message, 'errors');
-                $error++;
+                $urlParametersOut .= '?success=false&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
+            } else {
+                $urlParametersOut .= '?success=true&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
             }
+        } else {
+            $urlParametersOut .= '?success=false&nb_url=' . GETPOST('nb_url') . '&successType=shortener';
         }
-        if ($error == 0) {
-            setEventMessage($langs->trans('GenerateUrlSuccess', $i - 1));
-        }
-    } else {
-        setEventMessage($langs->trans('OriginalUrlFail'), 'errors');
     }
-    header('Location: ' . $_SERVER['PHP_SELF']);
+    header('Location: ' . $_SERVER['PHP_SELF'] . $urlParametersOut);
+    exit;
+}
+
+if ($action == 'generate_export' && $permissionToAdd) {
+    $export = new ExportShortenerDocument($db);
+
+    $export->create($user);
+    $nbUrl      = GETPOST('nb_url');
+    $shortener  = new Shortener($db);
+    $shorteners = $shortener->fetchAll('DESC', 'rowid', $nbUrl);
+    if (is_array($shorteners) && !empty($shorteners)) {
+        $data = [
+            'original_url'         => current($shorteners)->original_url,
+            'last_shortener_id'    => current($shorteners)->id,
+            'first_shortener_id'   => end($shorteners)->id,
+            'number_shortener_url' => $nbUrl
+        ];
+        $export->json = json_encode($data);
+        $export->generateFile();
+    }
+    header('Location: ' . $_SERVER['PHP_SELF'] . '?success=true&successType=export');
     exit;
 }
 
@@ -103,20 +124,32 @@ saturne_header(0,'', $title, $helpUrl);
 print load_fiche_titre($title, '', 'wrench');
 
 if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
-<div class="wpeo-notice notice-warning">
-    <div class="notice-content">
-        <div class="notice-title">
-            <a href="<?php echo dol_buildpath('/custom/easyurl/admin/setup.php', 1); ?>"><strong><?php echo $langs->trans('DefaultOriginalUrlConfiguration'); ?></strong></a>
+    <div class="wpeo-notice notice-warning">
+        <div class="notice-content">
+            <div class="notice-title">
+                <a href="<?php echo dol_buildpath('/custom/easyurl/admin/setup.php', 1); ?>"><strong><?php echo $langs->trans('DefaultOriginalUrlConfiguration'); ?></strong></a>
+            </div>
         </div>
     </div>
-</div>
 <?php endif;
+
+$translations = [
+    'ExportGenerating'  => $langs->transnoentities('ExportGenerating'),
+    'ExportError'       => $langs->transnoentities('ExportError'),
+    'ExportSuccess'     => $langs->transnoentities('ExportSuccess'),
+    'Success'           => $langs->transnoentities('Success'),
+    'Error'             => $langs->transnoentities('Error'),
+];
+print saturne_show_notice('', '', 'success', 'notice-infos', 0, 1, '', $translations);
 
 print load_fiche_titre($langs->trans('GenerateUrlManagement'), '', '');
 
 print '<form name="generate-url-from" id="generate-url-from" action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
 print '<input type="hidden" name="action" value="generate_url">';
+if (GETPOSTISSET('success')) {
+    print '<input type="hidden" name="success" value="' . GETPOST('success') . '">';
+}
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -134,9 +167,9 @@ print '<td>';
 print $form::selectarray('url_methode', $urlMethode, 'yourls');
 print '</td></tr>';
 
-print '<tr class="oddeven"><td><label for="nb_url">' . $langs->trans('NbUrl') . '</label></td>';
+print '<tr class="oddeven"><td class="fieldrequired"><label for="nb_url">' . $langs->trans('NbUrl') . '</label></td>';
 print '<td>' . $langs->trans('NbUrlDescription') . '</td>';
-print '<td><input class="minwidth100" type="number" name="nb_url" min="0"></td>';
+print '<td><input class="minwidth100" type="number" name="nb_url" min="1" required></td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td><label for="original_url">' . $langs->trans('OriginalUrl') . '</label></td>';
@@ -150,8 +183,61 @@ print '<td><input class="minwidth300" type="text" name="url_parameters"></td>';
 print '</tr>';
 
 print '</table>';
-print $form->buttonsSaveCancel('Generate', '');
+print '<div class="right">';
+print $form->buttonsSaveCancel('Generate', '', [], 1);
+print '</div>';
 print '</form>';
+
+print load_fiche_titre($langs->trans('GeneratedExport'), '', '');
+print '<table class="noborder centpercent" id="shortener-export-table">';
+
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans('ExportId') . '</td>';
+print '<td>' . $langs->trans('ExportNumber') . '</td>';
+print '<td>' . $langs->trans('ExportStart') . '</td>';
+print '<td>' . $langs->trans('ExportEnd') . '</td>';
+print '<td>' . $langs->trans('ExportDate') . '</td>';
+print '<td>' . $langs->trans('ExportOrigin') . '</td>';
+print '<td>' . $langs->trans('ExportConsume') . '</td>';
+print '<td>' . $langs->trans('Action') . '</td>';
+print '</tr>';
+
+$exportShortenerDocument  = new ExportShortenerDocument($db);
+$exportShortenerDocuments = $exportShortenerDocument->fetchAll('DESC', 'rowid', 0, 0, ['customsql' => 't.type="' . $exportShortenerDocument->element . '"']);
+
+if (is_array($exportShortenerDocuments) && !empty($exportShortenerDocuments)) {
+
+    $shortener = new Shortener($db);
+
+    foreach ($exportShortenerDocuments as $exportShortenerDocument) {
+
+        $data = json_decode($exportShortenerDocument->json, true);
+
+        $shorteners = $shortener->fetchAll('', '', $data['number_shortener_url'], 0, ['customsql' => 't.rowid >=' . $data['first_shortener_id']]);
+
+        if (is_array($shorteners) && !empty($shorteners)) {
+            print '<tr class="oddeven">';
+            print '<td>' . $exportShortenerDocument->ref . '</td>';
+            print '<td>' . $data['number_shortener_url'] . '</td>';
+            print '<td>' . $data['first_shortener_id'] . '</td>';
+            print '<td>' . $data['last_shortener_id'] . '</td>';
+            print '<td>' . dol_print_date($exportShortenerDocument->date_creation, 'dayhour', 'tzuser') . '</td>';
+            print '<td>' . dol_print_url($data['original_url'], '_blank', 64, 1) . '</td>';
+            print '<td>' . count(array_filter($shorteners, function ($elem) {return $elem->status == Shortener::STATUS_ASSIGN;})) . '</td>';
+
+            $uploadDir = $conf->easyurl->multidir_output[$conf->entity ?? 1];
+            $fileDir = $uploadDir . '/' . $exportShortenerDocument->element;
+            if (dol_is_file($fileDir . '/' . $exportShortenerDocument->last_main_doc)) {
+                $documentUrl = DOL_URL_ROOT . '/document.php';
+                $fileUrl = $documentUrl . '?modulepart=easyurl&file=' . urlencode($exportShortenerDocument->element . '/' . $exportShortenerDocument->last_main_doc);
+                print '<td><div><a class="marginleftonly" href="' . $fileUrl . '" download>' . img_picto($langs->trans('File') . ' : ' . $exportShortenerDocument->last_main_doc, 'fa-file-csv') . '</a></div></td>';
+            }
+            print '</tr>';
+        }
+    }
+} else {
+    print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans('NoRecordFound') . '</span></td></tr>';
+}
 
 // End of page
 llxFooter();

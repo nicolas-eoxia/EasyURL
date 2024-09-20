@@ -63,6 +63,7 @@ window.easyurl.shortener.event = function() {
   $(document).on('click', '.show-qrcode', window.easyurl.shortener.showQRCode);
   $(document).on('change', '#fromid', window.easyurl.shortener.reloadAssignShortenerView);
   $(document).on('click', '.button-save.assign-button', window.easyurl.shortener.assignShortener);
+  $(document).on('submit', '#generate-url-from', window.easyurl.shortener.buttonSave);
 };
 
 /**
@@ -175,5 +176,61 @@ window.easyurl.shortener.assignShortener = function() {
       window.parent.jQuery('#idfordialogassignShortener').dialog('close');
     },
     error: function() {}
+  });
+};
+
+/**
+ * ExportShortener button save
+ *
+ * @memberof EasyURL_Shortener
+ *
+ * @since   1.1.0
+ * @version 1.1.0
+ *
+ * @returns {void}
+ */
+window.easyurl.shortener.buttonSave = function(e) {
+  e.preventDefault();
+  let form = new FormData($('#generate-url-from')[0]);
+  let nbUrl = parseInt(form.get('nb_url'));
+
+  window.saturne.loader.display($('#generate-url-from .button-save'));
+  window.easyurl.shortener.createShortener(form, 1, nbUrl);
+}
+
+/**
+ * ExportShortener create link
+ *
+ * @memberof EasyURL_Shortener
+ *
+ * @since   1.1.0
+ * @version 1.1.0
+ *
+ * @returns {void}
+ */
+window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
+  let token = window.saturne.toolbox.getToken();
+  let querySeparator = window.saturne.toolbox.getQuerySeparator(document.URL);
+
+  $.ajax({
+    method: 'POST',
+    url: document.URL + querySeparator + 'action=generate_url&nb_url=' + current + '&token=' + token,
+    data: JSON.stringify(Object.fromEntries(form)),
+    processData: false,
+    contentType: false,
+    success: function (resp) {
+      let success = $(resp).find('input[name="success"]').val();
+
+      if (success == 'true') {
+        if (current < nbUrl) {
+          window.saturne.notice.showNotice('notice-infos', 'Success', 'ExportGenerating ' + current + ' URLs !', 'success');
+          window.easyurl.shortener.createShortener(form, ++current, nbUrl);
+        } else {
+          window.easyurl.exportshortener.generateExport(nbUrl);
+        }
+      } else {
+        window.saturne.notice.showNotice('notice-infos', 'Error', 'ExportError ' + current, 'error');
+      }
+    }
   });
 };
