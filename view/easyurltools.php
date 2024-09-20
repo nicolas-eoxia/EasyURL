@@ -133,8 +133,6 @@ if (!getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : ?>
     </div>
 <?php endif;
 
-
-
 $translations = [
     'ExportGenerating'  => $langs->transnoentities('ExportGenerating'),
     'ExportError'       => $langs->transnoentities('ExportError'),
@@ -144,6 +142,7 @@ $translations = [
 ];
 print saturne_show_notice('', '', 'success', 'notice-infos', 0, 1, '', $translations);
 
+print load_fiche_titre($langs->trans('GenerateUrlManagement'), '', '');
 
 print '<form name="generate-url-from" id="generate-url-from" action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
