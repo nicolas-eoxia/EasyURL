@@ -91,8 +91,10 @@ ExportEnd                       = ID fin URL
 ExportDate                      = Date export
 ExportOrigin                    = URL d'origine
 ExportConsume                   = Nombre d'URL consommé
-ExportGenerating                = Export en cours de
+ExportGenerating                = Generation en cours
 ExportSuccess                   = URL(s) exportées avec succès !
+YouGenerated                    = Vous avez généré
+UrlWithSuccess                  = URL(s) avec succès
 ExportError                     = Erreur lors de la génération de l'URL
 
 #

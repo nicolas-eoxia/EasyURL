@@ -153,7 +153,8 @@ if (!getDolGlobalString('EASYURL_URL_YOURLS_API') || !getDolGlobalString('EASYUR
 $translations = [
     'ExportGenerating' => $langs->transnoentities('ExportGenerating'),
     'ExportError'      => $langs->transnoentities('ExportError'),
-    'ExportSuccess'    => $langs->transnoentities('ExportSuccess'),
+    'YouGenerated'     => $langs->transnoentities('YouGenerated'),
+    'UrlWithSuccess'   => $langs->transnoentities('UrlWithSuccess'),
     'Success'          => $langs->transnoentities('Success'),
     'Error'            => $langs->transnoentities('Error'),
 ];

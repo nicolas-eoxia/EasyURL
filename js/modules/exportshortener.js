@@ -83,9 +83,12 @@ window.easyurl.exportshortener.generateExport = function(nbUrl) {
     processData: false,
     contentType: false,
     success: function (resp) {
-      window.saturne.notice.showNotice('notice-infos', 'Success', 'ExportSuccess', 'success');
+      window.saturne.notice.showNotice('notice-infos', 'Success', 'YouGenerated ' + nbUrl + ' UrlWithSuccess', 'success');
       window.saturne.loader.remove($('#generate-url-from .button-save'));
       $('#shortener-export-table').replaceWith($(resp).find('#shortener-export-table'));
+    },
+    error: function() {
+      window.saturne.notice.showNotice('notice-infos', 'Error', 'ExportError', 'error');
     }
   });
 };

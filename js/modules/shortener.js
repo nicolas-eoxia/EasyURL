@@ -223,7 +223,7 @@ window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
 
       if (success == 'true') {
         if (current < nbUrl) {
-          window.saturne.notice.showNotice('notice-infos', 'Success', 'ExportGenerating ' + current + ' URLs !', 'success');
+          window.saturne.notice.showNotice('notice-infos', 'ExportGenerating', 'ExportGenerating ' + current + ' URLs ! <div class="wpeo-loader" style="display: inline; margin-left: 2rem;"><span class="loader-spin wpeo-loader"></span></div>', 'warning');
           window.easyurl.shortener.createShortener(form, ++current, nbUrl);
         } else {
           window.easyurl.exportshortener.generateExport(nbUrl);
@@ -231,6 +231,9 @@ window.easyurl.shortener.createShortener = function(form, current, nbUrl) {
       } else {
         window.saturne.notice.showNotice('notice-infos', 'Error', 'ExportError ' + current, 'error');
       }
+    },
+    error: function() {
+      window.saturne.notice.showNotice('notice-infos', 'Error', 'ExportError ' + current, 'error');
     }
   });
 };
