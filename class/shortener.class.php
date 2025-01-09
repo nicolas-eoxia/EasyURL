@@ -289,10 +289,22 @@ class Shortener extends SaturneObject
      */
     public function load_dashboard(): array
     {
-        $getNbShortenerByStatus      = self::getNbShortenerByStatus();
-        $getNbShortenerByElementType = self::getNbShortenerByElementType();
+        global $user, $langs;
 
-        $array['graphs'] = [$getNbShortenerByStatus, $getNbShortenerByElementType];
+        $confName        = strtoupper($this->module) . '_DASHBOARD_CONFIG';
+        $dashboardConfig = json_decode($user->conf->$confName);
+        $array = ['graphs' => [], 'disabledGraphs' => []];
+
+        if (empty($dashboardConfig->graphs->ShortenerRepartitionStatus->hide)) {
+            $array['graphs'][] = $this->getNbShortenerByStatus();
+        } else {
+            $array['disabledGraphs']['ShortenerRepartitionStatus'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('Status')));
+        }
+        if (empty($dashboardConfig->graphs->ShortenerRepartitionElementType->hide)) {
+            $array['graphs'][] = $this->getNbShortenerByElementType();
+        } else {
+            $array['disabledGraphs']['ShortenerRepartitionElementType'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('ElementType')));
+        }
 
         return $array;
     }
@@ -309,6 +321,7 @@ class Shortener extends SaturneObject
 
         // Graph Title parameters
         $array['title'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('Status')));
+        $array['name']  = 'ShortenerRepartitionStatus';
         $array['picto'] = $this->picto;
 
         // Graph parameters
@@ -362,6 +375,7 @@ class Shortener extends SaturneObject
 
         // Graph Title parameters
         $array['title'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('ElementType')));
+        $array['name']  = 'ShortenerRepartitionElementType';
         $array['picto'] = $this->picto;
 
         // Graph parameters
