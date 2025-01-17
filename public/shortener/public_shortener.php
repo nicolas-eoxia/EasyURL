@@ -101,34 +101,39 @@ print '<input type="hidden" name="token" value="' . newToken() . '">'; ?>
     <?php if (getDolGlobalInt('SATURNE_ENABLE_PUBLIC_INTERFACE')) : ?>
         <div class="public-card__header">
             <div class="header-information">
-                <div class="information-title">
-                    <h1><?php echo $langs->transnoentities('AssignQRCode'); ?></h1>
-                </div>
+                <h1 class="information-title"><?php echo $langs->transnoentities('AssignQRCode'); ?></h1>
             </div>
         </div>
         <div class="public-card__content">
-            <?php
-                $productLotArrays = [];
-                $productLots      = saturne_fetch_all_object_type('ProductLot');
-                if (is_array($productLots) && !empty($productLots)) {
-                    foreach ($productLots as $productLot) {
-                        $productLotArrays[$productLot->id] = $productLot->batch;
+            <div class="wpeo-gridlayout grid-3">
+                <div>
+                    <?php
+                    $productLotArrays = [];
+                    $productLots      = saturne_fetch_all_object_type('ProductLot');
+                    if (is_array($productLots) && !empty($productLots)) {
+                        foreach ($productLots as $productLot) {
+                            $productLotArrays[$productLot->id] = $productLot->batch;
+                        }
                     }
-                }
-                print Form::selectarray('fk_element', $productLotArrays);
+                    print Form::selectarray('fk_element', $productLotArrays);
+                    ?>
+                </div>
 
-                $shortenerArrays = [];
-                $shorteners      = $shortener->fetchAll('', '', 0, 0, ['customsql' => 't.status = ' . Shortener::STATUS_VALIDATED]);
-                if (is_array($shorteners) && !empty($shorteners)) {
-                    foreach ($shorteners as $shortener) {
-                        $shortenerArrays[$shortener->id] = $shortener->label;
+                <div>
+                    <?php
+                    $shortenerArrays = [];
+                    $shorteners      = $shortener->fetchAll('', '', 0, 0, ['customsql' => 't.status = ' . Shortener::STATUS_VALIDATED]);
+                    if (is_array($shorteners) && !empty($shorteners)) {
+                        foreach ($shorteners as $shortener) {
+                            $shortenerArrays[$shortener->id] = $shortener->label;
+                        }
                     }
-                }
-                print Form::selectarray('label', $shortenerArrays);
-            ?>
-        </div>
-        <div class="public-card__footer">
-            <button type="submit" class="wpeo-button"><?php echo $langs->trans('Assign'); ?></button>
+                    print Form::selectarray('label', $shortenerArrays);
+                    ?>
+                </div>
+
+                <button type="submit" class="wpeo-button"><?php echo $langs->trans('Assign'); ?></button>
+            </div>
         </div>
     <?php else :
         print '<div class="center">' . $langs->trans('PublicInterfaceForbidden', $langs->transnoentities('OfAssignShortener')) . '</div>';
