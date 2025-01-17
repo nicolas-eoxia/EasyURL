@@ -1,11 +1,9 @@
-@use '../variable/colors' as colors;
-
 .page-public-card {
   .select2-container--default .select2-selection--single {
-    border: 3px solid colors.$color__public-secondary;
+    border: 3px solid $color__public-secondary;
     border-radius: 10px !important;
     font-size: 18px;
-    color: colors.$color__public-primary;
+    color: $color__public-primary;
     width: 100%;
     transition: all 0.2s ease-out;
     height: auto;
@@ -19,7 +17,6 @@
     }
   }
   .select2-container--focus span.select2-selection.select2-selection--single {
-    border-bottom: 3px solid colors.$color__public-secondary !important;
+    border-bottom: 3px solid $color__public-secondary !important;
   }
 }
-
