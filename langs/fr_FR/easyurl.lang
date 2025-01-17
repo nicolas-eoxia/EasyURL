@@ -123,4 +123,8 @@ ShortUrl = URL raccourcie
 UrlType  = Type d'URL
 
 # Public interface - Interface publique
-AssignQRCode = Affectation de QR Code
+AssignQRCode        = Affectation de QR Code
+NumProductLot       = N° du lot/série
+NumQRCode           = N° du QRCode
+AssignQRCodeSuccess = Affectation réussie du QRCode
+AssignQRCodeErrors  = Erreur : affectation du QRCode

@@ -56,7 +56,8 @@ if (file_exists('../../easyurl.main.inc.php')) {
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load EasyURL libraries
-require_once __DIR__ . '/../../../easyurl/class/shortener.class.php';
+require_once __DIR__ . '/../../class/shortener.class.php';
+require_once __DIR__ . '/../../lib/easyurl_function.lib.php';
 
 // Global variables definitions
 global $conf, $db, $hookmanager, $langs;
@@ -65,12 +66,13 @@ global $conf, $db, $hookmanager, $langs;
 saturne_load_langs();
 
 // Get parameters
-$track_id = GETPOST('track_id', 'alpha');
-$entity   = GETPOST('entity');
+$action = GETPOST('action', 'aZ09');
+$entity = GETPOST('entity');
 
 // Initialize technical objects
-$shortener  = new Shortener($db);
+$object     = new Shortener($db);
 $productLot = new ProductLot($db);
+$user       = new User($db);
 
 $hookmanager->initHooks(['publicshortener', 'saturnepublicinterface']); // Note that conf->hooks_modules contains array
 
@@ -80,14 +82,58 @@ if (!isModEnabled('multicompany')) {
 
 $conf->setEntityValues($db, $entity);
 
-// Load object
+/*
+ * Actions
+ */
 
+$parameters = [];
+$resHook    = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $project may have been modified by some hooks
+if ($resHook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($resHook)) {
+    if ($action == 'assign_qrcode') {
+        $fkElementID = GETPOSTINT('fk_element');
+        $shortenerID = GETPOSTINT('shortener');
+
+        $productLot->fetch($fkElementID);
+        $object->fetch($shortenerID);
+
+        if ($productLot->id > 0 && $object->id > 0) {
+            $object->element_type = 'productlot';
+            $object->fk_element   = $productLot->id;
+            $object->status       = Shortener::STATUS_ASSIGN;
+            $object->type         = 0; // TODO : Changer ça pour mettre une vrai valeur du dico ?
+
+            $publicControlInterfaceUrl = dol_buildpath('custom/digiquali/public/control/public_control_history.php?track_id=' . $productLot->array_options['options_control_history_link'] . '&entity=' . $conf->entity, 3);
+            $object->original_url      = $publicControlInterfaceUrl;
+
+            $result = update_easy_url_link($object);
+            if ($result > 0) {
+                $object->update($user);
+
+                $productLot->array_options['options_easy_url_all_link'] = $object->short_url;
+                $productLot->updateExtraField('easy_url_all_link');
+
+                setEventMessages('AssignQRCodeSuccess', []);
+            } else {
+                setEventMessages('AssignQRCodeErrors', [], 'errors');
+            }
+        } else {
+            setEventMessages('AssignQRCodeErrors', [], 'errors');
+        }
+
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?entity=' . $entity);
+        exit;
+    }
+}
 
 /*
  * View
  */
 
-$title = $langs->trans('PublicShortener');
+$title = $langs->trans('PublicInterfaceObject', $langs->transnoentities('OfAssignShortener')) . '</a>';
 
 $conf->dol_hide_topmenu  = 1;
 $conf->dol_hide_leftmenu = 1;
@@ -95,7 +141,8 @@ $conf->dol_hide_leftmenu = 1;
 saturne_header(1, '', $title,  '', '', 0, 0, [], [], '', 'page-public-card page-signature');
 
 print '<form id="public-shortener-form" method="POST" action="' . $_SERVER['PHP_SELF'] . '?entity=' . $entity . '">';
-print '<input type="hidden" name="token" value="' . newToken() . '">'; ?>
+print '<input type="hidden" name="token" value="' . newToken() . '">';
+print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
 
 <div class="public-card__container" data-public-interface="true">
     <?php if (getDolGlobalInt('SATURNE_ENABLE_PUBLIC_INTERFACE')) : ?>
@@ -108,31 +155,31 @@ print '<input type="hidden" name="token" value="' . newToken() . '">'; ?>
             <div class="wpeo-gridlayout grid-3">
                 <div>
                     <?php
-                    $productLotArrays = [];
-                    $productLots      = saturne_fetch_all_object_type('ProductLot');
-                    if (is_array($productLots) && !empty($productLots)) {
-                        foreach ($productLots as $productLot) {
-                            $productLotArrays[$productLot->id] = $productLot->batch;
+                        $productLotArrays = [];
+                        $productLots      = saturne_fetch_all_object_type('ProductLot');
+                        if (is_array($productLots) && !empty($productLots)) {
+                            foreach ($productLots as $productLot) {
+                                $productLotArrays[$productLot->id] = $productLot->batch;
+                            }
                         }
-                    }
-                    print Form::selectarray('fk_element', $productLotArrays);
+                        print Form::selectarray('fk_element', $productLotArrays, '', $langs->transnoentities('NumProductLot'));
                     ?>
                 </div>
 
                 <div>
                     <?php
-                    $shortenerArrays = [];
-                    $shorteners      = $shortener->fetchAll('', '', 0, 0, ['customsql' => 't.status = ' . Shortener::STATUS_VALIDATED]);
-                    if (is_array($shorteners) && !empty($shorteners)) {
-                        foreach ($shorteners as $shortener) {
-                            $shortenerArrays[$shortener->id] = $shortener->label;
+                        $shortenerArrays = [];
+                        $shorteners      = $object->fetchAll('', '', 0, 0, ['customsql' => 't.status = ' . Shortener::STATUS_VALIDATED]);
+                        if (is_array($shorteners) && !empty($shorteners)) {
+                            foreach ($shorteners as $shortener) {
+                                $shortenerArrays[$shortener->id] = $shortener->label;
+                            }
                         }
-                    }
-                    print Form::selectarray('label', $shortenerArrays);
+                        print Form::selectarray('shortener', $shortenerArrays, '', $langs->transnoentities('NumQRCode'));
                     ?>
                 </div>
 
-                <button type="submit" class="wpeo-button"><?php echo $langs->trans('Assign'); ?></button>
+                <button type="submit" class="wpeo-button" style="background: var(--butactionbg); border-color: var(--butactionbg);"><?php echo $langs->transnoentities('Assign'); ?></button>
             </div>
         </div>
     <?php else :
