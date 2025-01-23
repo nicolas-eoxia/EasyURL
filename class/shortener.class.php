@@ -281,6 +281,26 @@ class Shortener extends SaturneObject
         return '';
     }
 
+    public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
+    {
+        if ($key == 'fromid') {
+            $out             = '';
+            $shortenerArrays = [];
+            $valInfo         = explode(':', $val['type']);
+            $shorteners      = saturne_fetch_all_object_type('Shortener', '', '', 0, 0, ['customsql' => $valInfo[4]]);
+            if (is_array($shorteners) && !empty($shorteners)) {
+                foreach ($shorteners as $shortener) {
+                    $shortenerArrays[$shortener->id] = $shortener->ref;
+                }
+                $out = Form::selectarray($key, $shortenerArrays, '', 0, 0, 0, '', 0, 0, 0, '', !empty($val['css']) ? $val['css'] : 'minwidth200 maxwidth300 widthcentpercentminusx');
+            }
+
+            return $out;
+        }
+
+        return parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss, $nonewbutton);
+    }
+
     /**
      * Load dashboard info
      *
