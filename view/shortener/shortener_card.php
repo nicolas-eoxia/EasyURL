@@ -32,6 +32,7 @@ if (file_exists('../../easyurl.main.inc.php')) {
 
 // load EasyURL libraries
 require_once __DIR__ . '/../../lib/easyurl_shortener.lib.php';
+require_once __DIR__ . '/../../lib/easyurl_function.lib.php';
 require_once __DIR__ . '/../../class/shortener.class.php';
 
 // Global variables definitions
@@ -244,6 +245,20 @@ if (($id || $ref) && $action == 'edit') {
     print '</form>';
 }
 
+if (!empty($permissiontoadd) && $action == 'unassign') {
+
+    $object->status       = Shortener::STATUS_VALIDATED;
+    $object->original_url = getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL');
+    $object->update($user, true);
+
+    unassign_easy_url_link($object);
+
+    setEventMessage('UnassignSuccess');
+    // Ne fonctionne pas a voir pourquoi
+    //header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+    //exit;
+}
+
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
     $object->fetch_optionals();
@@ -318,8 +333,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     }
 
     if (empty($resHook) && $permissiontoadd) {
+
+        if ($object->status == Shortener::STATUS_ASSIGN) {
+            // UnAssign
+            $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('Unassign');
+            print '<a class="butAction" id="actionButtonEdit" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=unassign' . '">' . $displayButton . '</a>';
+        }
+
         // Modify
-        $displayButton = $onPhone ? '<i class="fas fa-edit fa-2x"></i>' : '<i class="fas fa-edit"></i>' . ' ' . $langs->trans('Modify');
+        $displayButton = $onPhone ? '<i class="fas fa-edit fa-2x white"></i>' : '<i class="fas fa-edit white"></i>' . ' ' . $langs->trans('Modify');
         if ($object->status >= Shortener::STATUS_DRAFT) {
             print '<a class="butAction" id="actionButtonEdit" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . ((dol_strlen($object->element_type) > 0 && !$langs->trans('NoLinkedElement')) ? '&element_type=' . $object->element_type : '') . '&action=edit' . '">' . $displayButton . '</a>';
         } else {
