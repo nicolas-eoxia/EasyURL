@@ -244,12 +244,12 @@ class Shortener extends SaturneObject
             $this->labelStatus[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatus[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
 
             $this->labelStatusShort[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatusShort[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
         }
 
         $statusType = 'status' . $status;
