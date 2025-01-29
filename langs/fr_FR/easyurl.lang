@@ -110,6 +110,7 @@ ModifyShortener           = Modifier le raccourcissement d'URL
 AssignShortener           = Affecter le raccourcissement d'URL
 ValidatePendingAssignment = Validé (en attente d'affectation)
 Assign                    = Affecter
+Assigned                  = Affecté
 NoLinkedElement           = Aucun élément lié
 ShortenerRepartition      = Répartition des raccourcissements d'URLs par %s
 ShortenerUrlType          = Liste des types d'URLs
