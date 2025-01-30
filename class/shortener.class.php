@@ -457,6 +457,7 @@ class Shortener extends SaturneObject
         $out .= '</td>';
         $out .= '<td>' . $langs->trans('OriginalUrl') . '</td>';
         $out .= '<td class="center">' . dolButtonToOpenUrlInDialogPopup('assignShortener', $langs->transnoentities('AssignShortener'), '<span class="fa fa fa-link valignmiddle btnTitle-icon" title="' . $langs->trans('Assign') . '"></span>', '/custom/easyurl/view/shortener/shortener_card.php?element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&action=edit_assign&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), '', 'btnTitle', 'window.saturne.toolbox.checkIframeCreation();') . '</td>';
+        $out .= '<td class="center">' . $langs->transnoentities('Unassign') . '</td>';
         $out .= '</thead></tr>';
         $out .= '<tbody>';
 
@@ -468,10 +469,11 @@ class Shortener extends SaturneObject
                 $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : $shortener->showOutputField($this->fields['short_url'], 'short_url', $shortener->short_url)) . '</td>';
                 $out .= '<td>' . $shortener->showOutputField($this->fields['original_url'], 'original_url', $shortener->original_url) . '</td>';
                 $out .= '<td class="center">' . ($user->rights->easyurl->shortener->write > 0 ? '<a class="editfielda" href="' . dol_buildpath('/custom/easyurl/view/shortener/shortener_card.php?id='. $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element_type=1&token=' . newToken() . '&action=edit&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), 1) . '">' . img_edit($langs->trans('Modify')) . '</a>' : '') . '</td>';
+                $out .= '<td class="center"><a href="' . dol_buildpath('/custom/easyurl/view/shortener/shortener_card.php?id=' . $shortener->id . '&action=unassign&reditect_url=' . urlencode($_SERVER['REQUEST_URI']), 1) . '" title="' . $langs->transnoentities('Unassign') . '"><i class="fas fa-unlink"></i></a></td>';
                 $out .= '</tr>';
             }
         } else {
-            $out .= '<tr><td colspan="4" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
+            $out .= '<tr><td colspan="5" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
         }
         $out .= '</tbody></table>';
 

@@ -212,37 +212,3 @@ function update_easy_url_link(CommonObject $object): int
     $data = json_decode($data);
     return $data->statusCode == 200 ? 1 : 0;
 }
-
-/**
- * UnAssign easy url link
- *
- * @param  CommonObject $object Object
- * @return int                  0 < on error, 1 = statusCode 200, 0 = other statusCode (ex : 404)
- */
-function unassign_easy_url_link(CommonObject $object): int
-{
-    global $conf;
-
-    // Init the CURL session
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $conf->global->EASYURL_URL_YOURLS_API);
-    curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
-    curl_setopt($ch, CURLOPT_POSTFIELDS, [               // Data to POST
-        'action'    => 'update',
-        'signature' => $conf->global->EASYURL_SIGNATURE_TOKEN_YOURLS_API,
-        'format'    => 'json',
-        'shorturl'  => $object->short_url,
-        'url'       => getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')
-    ]);
-
-    // Fetch and return content
-    $data = curl_exec($ch);
-    curl_close($ch);
-
-    // Do something with the result
-    $data = json_decode($data);
-    return $data->statusCode == 200 ? 1 : 0;
-}
