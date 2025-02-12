@@ -289,6 +289,11 @@ class modEasyURL extends DolibarrModules
         $this->rights[$r][4] = 'shortener';
         $this->rights[$r][5] = 'delete';
         $r++;
+        $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+        $this->rights[$r][1] = $langs->transnoentities('AssignShorteners');
+        $this->rights[$r][4] = 'shortener';
+        $this->rights[$r][5] = 'assign';
+        $r++;
 
         /* ADMINPAGE PANEL ACCESS PERMISSIONS */
         $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);

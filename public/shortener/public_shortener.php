@@ -30,9 +30,6 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOREQUIREHTML')) {
     define('NOREQUIREHTML', 1);
 }
-if (!defined('NOLOGIN')) {      // This means this output page does not require to be logged.
-    define('NOLOGIN', 1);
-}
 if (!defined('NOCSRFCHECK')) {  // We accept to go on this page from external website.
     define('NOCSRFCHECK', 1);
 }
@@ -60,7 +57,7 @@ require_once __DIR__ . '/../../class/shortener.class.php';
 require_once __DIR__ . '/../../lib/easyurl_function.lib.php';
 
 // Global variables definitions
-global $conf, $db, $hookmanager, $langs;
+global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
 saturne_load_langs();
@@ -72,7 +69,6 @@ $entity = GETPOST('entity');
 // Initialize technical objects
 $object     = new Shortener($db);
 $productLot = new ProductLot($db);
-$user       = new User($db);
 
 $hookmanager->initHooks(['publicshortener', 'saturnepublicinterface']); // Note that conf->hooks_modules contains array
 
@@ -81,6 +77,8 @@ if (!isModEnabled('multicompany')) {
 }
 
 $conf->setEntityValues($db, $entity);
+
+$permissionToAssign = $user->hasRight('easyurl', 'shortener', 'assign');
 
 /*
  * Actions
@@ -93,7 +91,7 @@ if ($resHook < 0) {
 }
 
 if (empty($resHook)) {
-    if ($action == 'assign_qrcode') {
+    if ($action == 'assign_qrcode' && $permissionToAssign) {
         $fkElementID = GETPOSTINT('fk_element');
         $shortenerID = GETPOSTINT('shortener');
 
@@ -130,7 +128,7 @@ if (empty($resHook)) {
 }
 
 /*
- * View
+ * View   
  */
 
 $title = $langs->trans('PublicInterfaceObject', $langs->transnoentities('OfAssignShortener')) . '</a>';
@@ -178,8 +176,9 @@ print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
                         print Form::selectarray('shortener', $shortenerArrays, '', $langs->transnoentities('NumQRCode'));
                     ?>
                 </div>
-
-                <button type="submit" class="wpeo-button" style="background: var(--butactionbg); border-color: var(--butactionbg);"><?php echo $langs->transnoentities('Assign'); ?></button>
+                <?php if ($permissionToAssign) : ?>
+                    <button type="submit" class="wpeo-button" style="background: var(--butactionbg); border-color: var(--butactionbg);"><?php echo $langs->transnoentities('Assign'); ?></button>
+                <?php endif; ?>
             </div>
         </div>
     <?php else :

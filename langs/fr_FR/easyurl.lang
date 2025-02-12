@@ -104,6 +104,9 @@ ExportError                     = Erreur lors de la génération de l'URL
 # Shortener - Raccourcissement d'URL
 #
 
+# Right - Droit
+AssignShorteners = Affecter les raccourcissements d'URLs
+
 # Data - Donnée
 Shortener                 = Raccourcissement d'URL
 TheShortener              = le raccourcissement d'URL
