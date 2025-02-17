@@ -60,7 +60,9 @@ window.easyurl.publicinterface.init = function() {
 
         let normalizedText = data.text.replace(/-/g, ' ').replace(/ /g, '').toLowerCase();
 
-        if (!term) return null;
+        if (!term) {
+          return null;
+        }
 
         if (normalizedText.includes(term)) {
           return data;
