@@ -49,23 +49,28 @@ window.easyurl.publicinterface = {};
 window.easyurl.publicinterface.init = function() {
   window.easyurl.publicinterface.event();
 
-  $('#shortener').select2({
-    matcher: function(params, data) {
-      if ($.trim(params.term) === '') {
-        return data;
+  $(document).ready(function() {
+    $('#shortener').select2({
+      matcher: function(params, data) {
+        if ($.trim(params.term) === '') {
+          return data;
+        }
+        let term = params.term.replace(/^https?:\/\//, '').split('/').pop().toLowerCase();
+        term = term.replace(/-/g, ' ').replace(/ /g, '');
+
+        let normalizedText = data.text.replace(/-/g, ' ').replace(/ /g, '').toLowerCase();
+
+        if (!term) return null;
+
+        if (normalizedText.includes(term)) {
+          return data;
+        }
+
+        return null;
       }
-
-      let term = params.term.replace(/^https?:\/\//, '').split('/').pop().toLowerCase();
-      term = term.replace(/-/g, ' ').replace(/ /g, '');
-      let normalizedText = data.text.replace(/-/g, ' ').replace(/ /g, '').toLowerCase();
-
-      if (normalizedText.includes(term)) {
-        return data;
-      }
-
-      return null;
-    }
+    });
   });
+
 };
 
 /**
