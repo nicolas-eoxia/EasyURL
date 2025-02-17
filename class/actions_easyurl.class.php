@@ -197,4 +197,25 @@ class ActionsEasyurl
 
         return 0; // or return 1 to replace standard code
     }
+
+    /**
+     * Overloading the digiqualiPublicControlTab function : replacing the parent's function with the one below
+     *
+     * @param  array $parameters Hook metadata (context, etc...)
+     * @return int               0 < on error, 0 on success, 1 to replace standard code
+     */
+    public function digiqualiPublicControlTab(array $parameters): int
+    {
+        global $langs;
+
+        if (isModEnabled('digiquali') && $parameters['objectType'] == 'productlot') {
+            $langs->load('easyurl@easyurl');
+
+            print '<a class="tab" href="' . dol_buildpath('custom/easyurl/public/shortener/public_shortener.php?track_id=' . $parameters['trackId'] . '&entity=' . $parameters['entity'], 1) . '">';
+            print $langs->transnoentities('AssignQRCode');
+            print '</a>';
+        }
+
+        return 0; // or return 1 to replace standard code
+    }
 }
