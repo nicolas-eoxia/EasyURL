@@ -211,7 +211,7 @@ class ActionsEasyurl
         if (isModEnabled('digiquali') && $parameters['objectType'] == 'productlot') {
             $langs->load('easyurl@easyurl');
 
-            print '<a class="tab" href="' . dol_buildpath('custom/easyurl/public/shortener/public_shortener.php?entity=' . $parameters['entity'], 1) . '">';
+            print '<a class="tab" href="' . dol_buildpath('custom/easyurl/public/shortener/public_shortener.php?track_id=' . $parameters['trackId'] . '&entity=' . $parameters['entity'], 1) . '">';
             print $langs->transnoentities('AssignQRCode');
             print '</a>';
         }
