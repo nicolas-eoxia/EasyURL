@@ -68,8 +68,8 @@ $action  = GETPOST('action', 'aZ09');
 $entity  = GETPOST('entity');
 
 // Initialize technical objects
-$object          = new Shortener($db);
-$linkableElement = null;
+$object       = new Shortener($db);
+$linkedObject = null;
 
 $hookmanager->initHooks(['publicshortener', 'saturnepublicinterface']); // Note that conf->hooks_modules contains array
 
@@ -111,28 +111,28 @@ if ($resHook < 0) {
 }
 
 if (empty($resHook)) {
-    if ($action == 'assign_qrcode' && $permissionToAssign && is_object($linkableElement)) {
+    if ($action == 'assign_qrcode' && $permissionToAssign && is_object($linkedObject)) {
         $fkElementID = GETPOSTINT('fk_element');
         $shortenerID = GETPOSTINT('shortener');
 
-        $linkableElement->fetch($fkElementID);
+        $linkedObject->fetch($fkElementID);
         $object->fetch($shortenerID);
 
-        if ($linkableElement->id > 0 && $object->id > 0) {
+        if ($linkedObject->id > 0 && $object->id > 0) {
             $object->element_type = 'productlot';
-            $object->fk_element   = $linkableElement->id;
+            $object->fk_element   = $linkedObject->id;
             $object->status       = Shortener::STATUS_ASSIGN;
             $object->type         = 0; // TODO : Changer ça pour mettre une vrai valeur du dico ?
 
-            $publicControlInterfaceUrl = dol_buildpath('custom/digiquali/public/control/public_control_history.php?track_id=' . $linkableElement->array_options['options_control_history_link'] . '&entity=' . $conf->entity, 3);
+            $publicControlInterfaceUrl = dol_buildpath('custom/digiquali/public/control/public_control_history.php?track_id=' . $linkedObject->array_options['options_control_history_link'] . '&entity=' . $conf->entity, 3);
             $object->original_url      = $publicControlInterfaceUrl;
 
             $result = update_easy_url_link($object);
             if ($result > 0) {
                 $object->update($user);
 
-                $linkableElement->array_options['options_easy_url_all_link'] = $object->short_url;
-                $linkableElement->updateExtraField('easy_url_all_link');
+                $linkedObject->array_options['options_easy_url_all_link'] = $object->short_url;
+                $linkedObject->updateExtraField('easy_url_all_link');
 
                 setEventMessages('AssignQRCodeSuccess', []);
             } else {
@@ -173,7 +173,7 @@ print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
             <div class="wpeo-gridlayout grid-3">
                 <div>
                     <?php
-                        if (is_object($linkableElement)) {
+                        if (is_array($linkableElement)) {
                             $linkableElementArrays  = [];
                             $linkableElementObjects = saturne_fetch_all_object_type($linkableElement['class_name']);
                             if (is_array($linkableElementObjects) && !empty($linkableElementObjects)) {
