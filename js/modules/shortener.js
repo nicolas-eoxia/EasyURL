@@ -64,6 +64,7 @@ window.easyurl.shortener.event = function() {
   $(document).on('change', '#fromid', window.easyurl.shortener.reloadAssignShortenerView);
   $(document).on('click', '.button-save.assign-button', window.easyurl.shortener.assignShortener);
   $(document).on('submit', '#generate-url-from', window.easyurl.shortener.buttonSave);
+  $(document).on('change', '#element_type', window.saturne.utils.reloadField);
 };
 
 /**

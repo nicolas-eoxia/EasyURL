@@ -32,6 +32,7 @@ if (file_exists('../../easyurl.main.inc.php')) {
 
 // load EasyURL libraries
 require_once __DIR__ . '/../../lib/easyurl_shortener.lib.php';
+require_once __DIR__ . '/../../lib/easyurl_function.lib.php';
 require_once __DIR__ . '/../../class/shortener.class.php';
 
 // Global variables definitions
@@ -118,6 +119,27 @@ if (empty($resHook)) {
         $noback = 1;
     }
 
+    if ($action == 'unassign' && !empty($permissiontoadd)) {
+        //@todo voir pour l'url par défaut
+        $object->status       = Shortener::STATUS_VALIDATED;
+        $object->original_url = getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL');
+        $object->fk_element   = NULL;
+        $object->element_type = '';
+
+        $object->update($user, true);
+        $object->call_trigger('SHORTENER_UNASSIGN', $user);
+
+        update_easy_url_link($object);
+
+        setEventMessages($langs->transnoentities('UnassignShortenerSuccess', $object->ref), []);
+        if (!empty($backtopage)) {
+            header('Location: ' . $backtopage);
+        } else {
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+        }
+        exit;
+    }
+
     // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
     require_once DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
 }
@@ -159,8 +181,8 @@ if ($action == 'edit_assign') {
 
     $object->fields['fromid']['type'] = 'integer:Shortener@EasyUrl:easyurl/class/shortener.class.php::(t.status = ' . Shortener::STATUS_VALIDATED . ')';
 
-    if (dol_strlen($object->element_type) > 0 || GETPOST('element_type')) {
-        $objectsMetadata = saturne_get_objects_metadata(dol_strlen($object->element_type) > 0 ? $object->element_type : GETPOST('element_type'));
+    if (dol_strlen($object->element_type) > 0 || GETPOSTISSET('element_type')) {
+        $objectsMetadata = saturne_get_objects_metadata(!empty(GETPOST('element_type')) ? GETPOST('element_type') : $object->element_type);
 
         $object->fields['element_type']['picto']                                       = $objectsMetadata['picto'];
         $object->fields['element_type']['arrayofkeyval'][$objectsMetadata['tab_type']] = $langs->trans($objectsMetadata['langs']);
@@ -213,8 +235,8 @@ if (($id || $ref) && $action == 'edit') {
 
     print '<table class="border centpercent tableforfieldedit">';
 
-    if (dol_strlen($object->element_type) > 0 || GETPOST('element_type')) {
-        $objectsMetadata = saturne_get_objects_metadata(dol_strlen($object->element_type) > 0 ? $object->element_type : GETPOST('element_type'));
+    if (dol_strlen($object->element_type) > 0 || GETPOSTISSET('element_type')) {
+        $objectsMetadata = saturne_get_objects_metadata(!empty(GETPOST('element_type')) ? GETPOST('element_type') : $object->element_type);
 
         $object->fields['element_type']['picto']                                       = $objectsMetadata['picto'];
         $object->fields['element_type']['arrayofkeyval'][$objectsMetadata['tab_type']] = $langs->trans($objectsMetadata['langs']);
@@ -224,8 +246,9 @@ if (($id || $ref) && $action == 'edit') {
         $object->fields['fk_element']['label'] = $langs->trans($objectsMetadata['langs']);
 
         if (GETPOST('from_element', 'int') > 0) {
-            $object->fields['element_type']['visible'] = 0;
-            $object->fields['fk_element']['visible']   = 0;
+            $object->fields['element_type']['noteditable'] = 1;
+            $object->fields['fk_element']['picto']         = '';
+            $object->fields['fk_element']['noteditable']   = 1;
         }
     }
 
@@ -324,6 +347,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<a class="butAction" id="actionButtonEdit" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . ((dol_strlen($object->element_type) > 0 && !$langs->trans('NoLinkedElement')) ? '&element_type=' . $object->element_type : '') . '&action=edit' . '">' . $displayButton . '</a>';
         } else {
             print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('ObjectMustBeDraft', ucfirst($langs->transnoentities('The' . ucfirst($object->element))))) . '">' . $displayButton . '</span>';
+        }
+
+        // Unassign
+        $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('Unassign');
+        if ($object->status == Shortener::STATUS_ASSIGN) {
+            print dolGetButtonAction($displayButton, '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=unassign&token=' . newToken());
         }
 
         // Delete (need delete permission, or if draft, just need create/modify permission).

@@ -109,6 +109,9 @@ ExportError                     = Erreur lors de la génération de l'URL
 # Right - Droit
 AssignShorteners = Affecter les raccourcissements d'URLs
 
+# Trigger - Déclencheur
+ObjectUnAssignTrigger = %s %s désaffectée
+
 # Data - Donnée
 Shortener                 = Raccourcissement d'URL
 TheShortener              = le raccourcissement d'URL
@@ -119,6 +122,8 @@ AssignShortener           = Affecter le raccourcissement d'URL
 ValidatePendingAssignment = Validé (en attente d'affectation)
 Assign                    = Affecter
 Assigned                  = Affecté
+Unassign                  = Désaffecter
+UnassignShortenerSuccess  = Désaffectation du raccourcissement d'URL <strong>%s</strong>
 NoLinkedElement           = Aucun élément lié
 ShortenerRepartition      = Répartition des raccourcissements d'URLs par %s
 ShortenerUrlType          = Liste des types d'URLs
