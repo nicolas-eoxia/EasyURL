@@ -159,7 +159,7 @@ $title = $langs->trans('PublicInterfaceObject', $langs->transnoentities('OfAssig
 $conf->dol_hide_topmenu  = 1;
 $conf->dol_hide_leftmenu = 1;
 
-saturne_header(1, '', $title,  '', '', 0, 0, [], [], '', 'page-public-card page-signature');
+saturne_header(1, '', $title,  '', '', 0, 0, [], [], '', 'page-public-card page-public-shortener');
 
 print '<form id="public-shortener-form" method="POST" action="' . $_SERVER['PHP_SELF'] . '?entity=' . $entity . '">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';

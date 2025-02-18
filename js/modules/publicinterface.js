@@ -48,7 +48,7 @@ window.easyurl.publicinterface.init = function() {
   window.easyurl.publicinterface.event();
 
   $(document).ready(function() {
-    $('#shortener').select2({
+    $('.page-public-shortener #shortener').select2({
       matcher: function(params, data) {
         if ($.trim(params.term) === '') {
           return data;
