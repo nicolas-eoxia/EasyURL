@@ -68,8 +68,22 @@ $action  = GETPOST('action', 'aZ09');
 $entity  = GETPOST('entity');
 
 // Initialize technical objects
-$object       = new Shortener($db);
-$linkedObject = null;
+$object = new Shortener($db);
+
+if (!empty($trackId)) {
+    $objectDataJson = base64_decode($trackId);
+    $objectData     = json_decode($objectDataJson);
+    $linkedObject   = null;
+    if (!empty($objectData)) {
+        $objectType = $objectData->type;
+        $objectId   = $objectData->id;
+
+        $linkedObject = new $objectType($db);
+    }
+} else {
+    //@todo : Besoin du selecteur d'object pour le moment on va forcer ProductLot
+    $linkedObject = new ProductLot($db);
+}
 
 $hookmanager->initHooks(['publicshortener', 'saturnepublicinterface']); // Note that conf->hooks_modules contains array
 
@@ -79,26 +93,13 @@ if (!isModEnabled('multicompany')) {
 
 $conf->setEntityValues($db, $entity);
 
+//@todo notice d'erreur pour le track_id
+// Load linkable elements
 $objectId        = 0;
 $linkableElement = [];
-
-if (!empty($trackId)) {
-    // Load linkable elements
+if (is_object($linkedObject)) {
     $linkableElements = saturne_get_objects_metadata();
-
-    // Load object
-    $objectDataJson = base64_decode($trackId);
-    $objectData     = json_decode($objectDataJson);
-    if (!empty($objectData)) {
-        $objectType = $objectData->type;
-        $objectId   = $objectData->id;
-
-        $linkedObject = new $objectType($db);
-
-        $linkedObject->fetch($objectId);
-
-        $linkableElement = $linkableElements[$linkedObject->element];
-    }
+    $linkableElement  = $linkableElements[$linkedObject->element];
 }
 
 $permissionToAssign = $user->hasRight('easyurl', 'shortener', 'assign');
@@ -145,7 +146,7 @@ if (empty($resHook)) {
             setEventMessages('AssignQRCodeErrors', [], 'errors');
         }
 
-        header('Location: ' . $_SERVER['PHP_SELF'] . '?entity=' . $entity);
+        header('Location: ' . $_SERVER['PHP_SELF'] . (!empty($trackId) ? '?track_id=' .  $trackId . '&' : '?') . 'entity=' . $entity);
         exit;
     }
 }
@@ -161,12 +162,12 @@ $conf->dol_hide_leftmenu = 1;
 
 saturne_header(1, '', $title,  '', '', 0, 0, [], [], '', 'page-public-card page-public-shortener');
 
-print '<form id="public-shortener-form" method="POST" action="' . $_SERVER['PHP_SELF'] . '?entity=' . $entity . '">';
+print '<form id="public-shortener-form" method="POST" action="' . $_SERVER['PHP_SELF'] . (!empty($trackId) ? '?track_id=' .  $trackId . '&' : '?') . 'entity=' . $entity . '">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
 print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
 
 <div class="public-card__container" data-public-interface="true">
-    <?php if (getDolGlobalInt('SATURNE_ENABLE_PUBLIC_INTERFACE') && !empty($trackId)) : ?>
+    <?php if (getDolGlobalInt('SATURNE_ENABLE_PUBLIC_INTERFACE')) : ?>
         <div class="public-card__header">
             <div class="header-information">
                 <h1 class="information-title"><?php echo $langs->transnoentities('AssignQRCode'); ?></h1>
@@ -176,7 +177,7 @@ print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
             <div class="wpeo-gridlayout grid-3">
                 <div>
                     <?php
-                        if (is_array($linkableElement) && !empty($linkableElement)) {
+                        if (!empty($linkableElement)) {
                             $linkableElementArrays  = [];
                             $linkableElementObjects = saturne_fetch_all_object_type($linkableElement['class_name']);
                             if (is_array($linkableElementObjects) && !empty($linkableElementObjects)) {
