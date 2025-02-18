@@ -180,8 +180,8 @@ if ($action == 'edit_assign') {
 
     $object->fields['fromid']['type'] = 'integer:Shortener@EasyUrl:easyurl/class/shortener.class.php::(t.status = ' . Shortener::STATUS_VALIDATED . ')';
 
-    if (dol_strlen($object->element_type) > 0 || GETPOST('element_type')) {
-        $objectsMetadata = saturne_get_objects_metadata(dol_strlen($object->element_type) > 0 ? $object->element_type : GETPOST('element_type'));
+    if (dol_strlen($object->element_type) > 0 || GETPOSTISSET('element_type')) {
+        $objectsMetadata = saturne_get_objects_metadata(!empty(GETPOST('element_type')) ? GETPOST('element_type') : $object->element_type);
 
         $object->fields['element_type']['picto']                                       = $objectsMetadata['picto'];
         $object->fields['element_type']['arrayofkeyval'][$objectsMetadata['tab_type']] = $langs->trans($objectsMetadata['langs']);
@@ -234,8 +234,8 @@ if (($id || $ref) && $action == 'edit') {
 
     print '<table class="border centpercent tableforfieldedit">';
 
-    if (dol_strlen($object->element_type) > 0 || GETPOST('element_type')) {
-        $objectsMetadata = saturne_get_objects_metadata(dol_strlen($object->element_type) > 0 ? $object->element_type : GETPOST('element_type'));
+    if (dol_strlen($object->element_type) > 0 || GETPOSTISSET('element_type')) {
+        $objectsMetadata = saturne_get_objects_metadata(!empty(GETPOST('element_type')) ? GETPOST('element_type') : $object->element_type);
 
         $object->fields['element_type']['picto']                                       = $objectsMetadata['picto'];
         $object->fields['element_type']['arrayofkeyval'][$objectsMetadata['tab_type']] = $langs->trans($objectsMetadata['langs']);
