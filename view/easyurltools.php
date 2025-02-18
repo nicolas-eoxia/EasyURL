@@ -192,7 +192,7 @@ print '</tr>';
 
 print '<tr class="oddeven"><td><label for="original_url">' . $langs->trans('OriginalUrl') . '</label></td>';
 print '<td>' .  $langs->trans('OriginalUrlDescription') . (getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL') ? $langs->trans('OriginalUrlMoreDescription', getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL')) : '') . '</td>';
-print '<td><input class="minwidth300" type="text" name="original_url"></td>';
+print '<td><input class="minwidth300" type="text" name="original_url" value="' . getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL') . '"></td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td><label for="url_parameters">' . $langs->trans('UrlParameters') . '</label></td>';
