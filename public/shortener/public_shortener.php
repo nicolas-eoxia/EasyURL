@@ -138,7 +138,7 @@ if (empty($resHook)) {
                 $linkedObject->array_options['options_easy_url_all_link'] = $object->short_url;
                 $linkedObject->updateExtraField('easy_url_all_link');
 
-                setEventMessages('AssignQRCodeSuccess', []);
+                setEventMessages($langs->transnoentities('AssignQRCodeSuccess', $object->label, $langs->transnoentities($linkableElement['langs']), $linkedObject->{$linkableElement['name_field']}), []);
             } else {
                 setEventMessages('AssignQRCodeErrors', [], 'errors');
             }

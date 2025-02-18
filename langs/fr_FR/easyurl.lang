@@ -138,5 +138,5 @@ UrlType  = Type d'URL
 AssignQRCode        = Affectation de QR Code
 NumProductLot       = N° du lot/série
 NumQRCode           = N° du QRCode
-AssignQRCodeSuccess = Affectation réussie du QRCode
+AssignQRCodeSuccess = Affectation réussie du N° du QRCode <strong>%s</strong> sur %s <strong>%s</strong>
 AssignQRCodeErrors  = Erreur : affectation du QRCode
