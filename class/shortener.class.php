@@ -112,7 +112,7 @@ class Shortener extends SaturneObject
         'ref_ext'             => ['type' => 'varchar(128)',                       'label' => 'RefExt',           'enabled' => 1, 'position' => 20,  'notnull' => 0, 'visible' => 0],
         'entity'              => ['type' => 'integer',                            'label' => 'Entity',           'enabled' => 1, 'position' => 30,  'notnull' => 1, 'visible' => 0, 'index' => 1],
         'date_creation'       => ['type' => 'datetime',                           'label' => 'DateCreation',     'enabled' => 1, 'position' => 40,  'notnull' => 1, 'visible' => 2],
-        'tms'                 => ['type' => 'timestamp',                          'label' => 'DateModification', 'enabled' => 1, 'position' => 50,  'notnull' => 0, 'visible' => 0],
+        'tms'                 => ['type' => 'timestamp',                          'label' => 'DateModification', 'enabled' => 1, 'position' => 50,  'notnull' => 0, 'visible' => 2],
         'import_key'          => ['type' => 'varchar(14)',                        'label' => 'ImportId',         'enabled' => 1, 'position' => 60,  'notnull' => 0, 'visible' => 0],
         'status'              => ['type' => 'smallint',                           'label' => 'Status',           'enabled' => 1, 'position' => 160, 'notnull' => 1, 'visible' => 2, 'default' => 0, 'index' => 1, 'arrayofkeyval' => [0 => 'StatusDraft', 1 => 'ValidatePendingAssignment', 10 => 'Assign'], 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx'],
         'label'               => ['type' => 'varchar(255)',                       'label' => 'Label',            'enabled' => 1, 'position' => 70,  'notnull' => 1, 'visible' => 5, 'searchall' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1],
@@ -244,12 +244,12 @@ class Shortener extends SaturneObject
             $this->labelStatus[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatus[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
 
             $this->labelStatusShort[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatusShort[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
         }
 
         $statusType = 'status' . $status;
@@ -279,6 +279,40 @@ class Shortener extends SaturneObject
     public function setCategories($categories): string
     {
         return '';
+    }
+
+    /**
+     * Return HTML string to put an input field into a page
+     * Code very similar with showInputField of extra fields
+     *
+     * @param  string          $key         Key of attribute
+     * @param  string|string[] $value       Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+     * @param  string          $moreparam   To add more parameters on html input tag
+     * @param  string          $keysuffix   Suffix string to add into name and id of field (can be used to avoid duplicate names)
+     * @param  string          $keyprefix   Prefix string to add into name and id of field (can be used to avoid duplicate names)
+     * @param  string|int      $morecss     Value for css to define style/length of field. May also be a numeric
+     * @param  int<0,1>        $nonewbutton Force to not show the new button on field that are links to object
+     * @return string          $out         HTML string to put an input field into a page
+     * @throws Exception
+     */
+    public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0): string
+    {
+        if ($key == 'fromid') {
+            $out             = '';
+            $shortenerArrays = [];
+            $valInfo         = explode(':', $val['type']);
+            $shorteners      = saturne_fetch_all_object_type('Shortener', '', '', 0, 0, ['customsql' => $valInfo[4]]);
+            if (is_array($shorteners) && !empty($shorteners)) {
+                foreach ($shorteners as $shortener) {
+                    $shortenerArrays[$shortener->id] = $shortener->ref;
+                }
+                $out = Form::selectarray($keyprefix . $key . $keysuffix, $shortenerArrays, $value, 1, 0, 0, '', 0, 0, 0, '', !empty($val['css']) ? $val['css'] : 'minwidth200 maxwidth300 widthcentpercentminusx');
+            }
+
+            return $out;
+        }
+
+        return parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss, $nonewbutton);
     }
 
     /**

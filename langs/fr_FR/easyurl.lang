@@ -44,6 +44,9 @@ ManualEasyUrlGeneration               = Génération manuelle des URLs raccourci
 ManualEasyUrlGenerationDescription    = Ajout d'un bouton pour créer une URL raccourcie sur un objet <br> (proposition commerciale, commande, facture)
 WarningApiCredentialsIncorrect        = Les informations d'API sont incorrects
 
+# Public interface - Interface publique
+OfAssignShortener = d'affectation de raccourcissement d'URL
+
 
 
 #
@@ -71,7 +74,7 @@ GetEasyURLErrors     = Erreur : URL raccourcie non trouvée
 GenerateUrlManagement           = Gestion de la génération des raccourcissements d'URLs
 GeneratedExport                 = Export déjà générés
 NbUrl                           = Nombre d'URL
-NbUrlDescription                = Cette option permet de choisir le nombre d'URL à générée
+NbUrlDescription                = Cette option permet de choisir le nombre d'URL à générer
 OriginalUrl                     = URL d'origine
 OriginalUrlDescription          = Cette option permet de choisir l'URL d'origine
 OriginalUrlMoreDescription      = <br> (par défaut si aucune URL n'est renseignée alors l'URL par défaut est : <b>%s</b>)
@@ -101,6 +104,9 @@ ExportError                     = Erreur lors de la génération de l'URL
 # Shortener - Raccourcissement d'URL
 #
 
+# Right - Droit
+AssignShorteners = Affecter les raccourcissements d'URLs
+
 # Data - Donnée
 Shortener                 = Raccourcissement d'URL
 TheShortener              = le raccourcissement d'URL
@@ -110,6 +116,7 @@ ModifyShortener           = Modifier le raccourcissement d'URL
 AssignShortener           = Affecter le raccourcissement d'URL
 ValidatePendingAssignment = Validé (en attente d'affectation)
 Assign                    = Affecter
+Assigned                  = Affecté
 Unassign                  = Désaffecter
 UnassignSuccess           = Désaffectation réussie
 NoLinkedElement           = Aucun élément lié
@@ -120,3 +127,10 @@ ShowQRCode                = Afficher le QRCode de l'URL raccourcie
 # Fiels - Champ
 ShortUrl = URL raccourcie
 UrlType  = Type d'URL
+
+# Public interface - Interface publique
+AssignQRCode        = Affectation de QR Code
+NumProductLot       = N° du lot/série
+NumQRCode           = N° du QRCode
+AssignQRCodeSuccess = Affectation réussie du QRCode
+AssignQRCodeErrors  = Erreur : affectation du QRCode

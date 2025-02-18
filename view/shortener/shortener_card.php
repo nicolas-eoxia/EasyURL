@@ -178,7 +178,7 @@ if ($action == 'edit_assign') {
 
     print '<table class="border centpercent tableforfieldedit">';
 
-    $object->fields['fromid']['type'] = 'integer:Shortener@EasyUrl:easyurl/class/shortener.class.php::(t.status:=:' . Shortener::STATUS_VALIDATED . ')';
+    $object->fields['fromid']['type'] = 'integer:Shortener@EasyUrl:easyurl/class/shortener.class.php::(t.status = ' . Shortener::STATUS_VALIDATED . ')';
 
     if (dol_strlen($object->element_type) > 0 || GETPOST('element_type')) {
         $objectsMetadata = saturne_get_objects_metadata(dol_strlen($object->element_type) > 0 ? $object->element_type : GETPOST('element_type'));

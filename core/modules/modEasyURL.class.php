@@ -121,7 +121,8 @@ class modEasyURL extends DolibarrModules
                 'interventioncard',
                 'propallist',
                 'orderlist',
-                'invoicelist'
+                'invoicelist',
+                'publiccontrol'
             ],
             // Set this to 1 if features of module are opened to external users
             'moduleforexternal' => 0
@@ -287,6 +288,11 @@ class modEasyURL extends DolibarrModules
         $this->rights[$r][1] = $langs->transnoentities('DeleteObjects', $langs->transnoentities('Shorteners'));
         $this->rights[$r][4] = 'shortener';
         $this->rights[$r][5] = 'delete';
+        $r++;
+        $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+        $this->rights[$r][1] = $langs->transnoentities('AssignShorteners');
+        $this->rights[$r][4] = 'shortener';
+        $this->rights[$r][5] = 'assign';
         $r++;
 
         /* ADMINPAGE PANEL ACCESS PERMISSIONS */
