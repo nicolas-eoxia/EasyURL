@@ -536,6 +536,9 @@ class Shortener extends SaturneObject
         $out .= $form->textwithpicto('', $langs->trans('ShowQRCode'));
         $out .= '</td>';
         $out .= '<td>' . $langs->trans('OriginalUrl') . '</td>';
+        if (getDolGlobalInt('EASYURL_SHOW_API_INFOS')) {
+            $out .= '<td>' . $langs->trans('NbClick') . '</td>';
+        }
         if ($user->hasRight('easyurl', 'shortener', 'write')) {
             $out .= '<td class="center">' . dolButtonToOpenUrlInDialogPopup('assignShortener', $langs->transnoentities('AssignShortener'), '<span class="fas fa-link fa-2x valignmiddle btnTitle-icon" title="' . $langs->trans('Assign') . '"></span>', '/custom/easyurl/view/shortener/shortener_card.php?element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&action=edit_assign', '', 'btnTitle', 'window.saturne.toolbox.checkIframeCreation();') . '</td>';
         }
@@ -549,6 +552,10 @@ class Shortener extends SaturneObject
                 $out .= '<td class="minwidth100">' . getDictionaryValue('c_shortener_url_type', 'label', $shortener->type) . '</td>';
                 $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : $shortener->showOutputField($this->fields['short_url'], 'short_url', $shortener->short_url)) . '</td>';
                 $out .= '<td>' . $shortener->showOutputField($this->fields['original_url'], 'original_url', $shortener->original_url) . '</td>';
+                if (getDolGlobalInt('EASYURL_SHOW_API_INFOS')) {
+                    $shortenerData = get_easy_url_link($object, 'all');
+                    $out .= '<td>' . (isset($shortenerData->link) && isset($shortenerData->link->clicks) ? $shortenerData->link->clicks : 0) . '</td>';
+                }
                 if ($user->hasRight('easyurl', 'shortener', 'write')) {
                     $out .= '<td class="center">';
                     $out .= '<a class="editfielda paddingright" href="' . dol_buildpath('custom/easyurl/view/shortener/shortener_card.php?id=' . $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&token=' . newToken() . '&action=edit&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), 1) . '">' . img_edit($langs->trans('Modify')) . '</a>';
@@ -558,7 +565,8 @@ class Shortener extends SaturneObject
                 $out .= '</tr>';
             }
         } else {
-            $out .= '<tr><td colspan="4" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
+            $colspan = 4 + getDolGlobalInt('EASYURL_SHOW_API_INFOS');
+            $out    .= '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
         }
         $out .= '</tbody></table>';
 
