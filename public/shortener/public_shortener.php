@@ -79,6 +79,9 @@ if (!isModEnabled('multicompany')) {
 
 $conf->setEntityValues($db, $entity);
 
+$objectId        = 0;
+$linkableElement = [];
+
 if (!empty($trackId)) {
     // Load linkable elements
     $linkableElements = saturne_get_objects_metadata();
@@ -173,7 +176,7 @@ print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
             <div class="wpeo-gridlayout grid-3">
                 <div>
                     <?php
-                        if (is_array($linkableElement)) {
+                        if (is_array($linkableElement) && !empty($linkableElement)) {
                             $linkableElementArrays  = [];
                             $linkableElementObjects = saturne_fetch_all_object_type($linkableElement['class_name']);
                             if (is_array($linkableElementObjects) && !empty($linkableElementObjects)) {
@@ -181,7 +184,7 @@ print '<input type="hidden" name="action" value="assign_qrcode">'; ?>
                                     $linkableElementArrays[$linkableElementObject->id] = $linkableElementObject->{$linkableElement['name_field']};
                                 }
                             }
-                            print Form::selectarray('fk_element', $linkableElementArrays, '', $langs->transnoentities('NumProductLot'));
+                            print Form::selectarray('fk_element', $linkableElementArrays, $objectId, $langs->transnoentities('NumProductLot'));
                         }
                     ?>
                 </div>
