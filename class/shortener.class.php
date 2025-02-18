@@ -565,7 +565,8 @@ class Shortener extends SaturneObject
                 $out .= '</tr>';
             }
         } else {
-            $out .= '<tr><td colspan="4 + getDolGlobalInt('EASYURL_SHOW_API_INFOS')" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
+            $colspan = 4 + getDolGlobalInt('EASYURL_SHOW_API_INFOS');
+            $out    .= '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
         }
         $out .= '</tbody></table>';
 
