@@ -152,6 +152,12 @@ print '<td>';
 print ajax_constantonoff('EASYURL_USE_SHA_URL');
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>' . $langs->trans('ShowAPIInfos') . '</td>';
+print '<td>' . $langs->trans('ShowAPIInfosDescription') . '</td>';
+print '<td>';
+print ajax_constantonoff('EASYURL_SHOW_API_INFOS');
+print '</td></tr>';
+
 print '<tr class="oddeven"><td>' . $langs->trans('AutomaticEasyUrlGeneration') . '</td>';
 print '<td>' . $langs->trans('AutomaticEasyUrlGenerationDescription') . '</td>';
 print '<td>';

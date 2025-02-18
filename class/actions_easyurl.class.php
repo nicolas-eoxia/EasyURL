@@ -84,15 +84,15 @@ class ActionsEasyurl
                 $picto     = img_picto('', $pictoPath, '', 1, 0, 0, '', 'pictoModule');
                 $urlTypes  = ['payment', 'signature'];
                 foreach ($urlTypes as $urlType) {
-                    $checkEasyUrlLink = get_easy_url_link($object, $urlType);
-                    $jQueryElement    = '.' . $object->element . '_extras_easy_url_' . $urlType . '_link';
-                    if ($checkEasyUrlLink == 0 && getDolGlobalInt('EASYURL_MANUAL_GENERATION')) {
+                    $shortenerData = get_easy_url_link($object, $urlType);
+                    $jQueryElement = '.' . $object->element . '_extras_easy_url_' . $urlType . '_link';
+                    if ($shortenerData->statusCode != 200 && getDolGlobalInt('EASYURL_MANUAL_GENERATION')) {
                         $output  = $picto;
                         $output .= '<a class="reposition editfielda" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=set_easy_url&url_type=' . $urlType . '&token=' . newToken() . '">';
                         $output .= img_picto($langs->trans('SetEasyURLLink'), 'fontawesome_fa-redo_fas_#444', 'class="paddingright pictofixedwidth valignmiddle"') . '</a>';
                         $output .= '</span>' . img_picto($langs->trans('GetEasyURLErrors'), 'fontawesome_fa-exclamation-triangle_fas_#bc9526') . '</span>';
                     }
-                    if (!empty($object->array_options['options_easy_url_' . $urlType . '_link']) && $checkEasyUrlLink > 0) {
+                    if (!empty($object->array_options['options_easy_url_' . $urlType . '_link']) && $shortenerData->statusCode == 200) {
                         $output = showValueWithClipboardCPButton($object->array_options['options_easy_url_' . $urlType . '_link'], 0, 'none');
                     } ?>
                     <script>

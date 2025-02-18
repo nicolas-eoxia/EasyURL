@@ -38,6 +38,8 @@ DefaultOriginalUrl                    = URL d'origine par défaut
 DefaultOriginalUrlDescription         = Cette option permet de configurer l'URL d'origine par défaut
 UseShaUrl                             = SHA dans l'URL raccourcie
 UseShaUrlDescription                  = Cette option permet d'ajouter un SHA (8 caractères) dans le raccourcissement des URLs
+ShowAPIInfos                          = Afficher les informations supplémentaire de l'API
+ShowAPIInfosDescription               = Cette option permet d'afficher les informations supplémentaire de l'API <br> (nombre de click, etc)
 AutomaticEasyUrlGeneration            = Génération automatique des URLs raccourcies
 AutomaticEasyUrlGenerationDescription = Crée automatiquement l'URL raccourcie lors de la validation d'un objet <br> (proposition commerciale, commande, facture)
 ManualEasyUrlGeneration               = Génération manuelle des URLs raccourcies
@@ -121,6 +123,7 @@ NoLinkedElement           = Aucun élément lié
 ShortenerRepartition      = Répartition des raccourcissements d'URLs par %s
 ShortenerUrlType          = Liste des types d'URLs
 ShowQRCode                = Afficher le QRCode de l'URL raccourcie
+NbClick                   = Nombre de click
 
 # Fiels - Champ
 ShortUrl = URL raccourcie

@@ -161,13 +161,13 @@ function set_easy_url_link(CommonObject $object, string $urlType, string $urlMet
  *
  * @param  CommonObject $object  Object
  * @param  string       $urlType Url type
- * @return int                   0 < on error, 1 = statusCode 200, 0 = other statusCode (ex : 404)
+ * @return stdClass|int          0 < on error, data object on success
  */
-function get_easy_url_link(CommonObject $object, string $urlType): int
+function get_easy_url_link(CommonObject $object, string $urlType)
 {
     $useOnlinePayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
     $checkConf        = getDolGlobalString('EASYURL_URL_YOURLS_API') && getDolGlobalString('EASYURL_SIGNATURE_TOKEN_YOURLS_API');
-    if ((($urlType == 'payment' && $useOnlinePayment) || $urlType == 'signature') && $checkConf) {
+    if ((($urlType == 'payment' && $useOnlinePayment) || $urlType == 'signature' || $urlType == 'all') && $checkConf) {
         $object->fetch($object->id);
 
         $curlPostFields = [
@@ -177,11 +177,11 @@ function get_easy_url_link(CommonObject $object, string $urlType): int
         $ch = init_easy_url_curl($curlPostFields);
 
         // Fetch and return content
-        curl_exec($ch);
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $data = curl_exec($ch);
         curl_close($ch);
 
-        return $statusCode == 200;
+        // Do something with the result
+        return json_decode($data);
     } else {
         return -1;
     }
