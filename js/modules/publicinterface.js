@@ -1,4 +1,4 @@
-/* Copyright (C) 2024-2024 EVARISK <technique@evarisk.com>
+/* Copyright (C) 2025 EVARISK <technique@evarisk.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,12 +12,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Library javascript to enable Browser notifications
  */
 
 /**
- * \file    js/publicinterface.js
+ * \file    js/modules/publicinterface.js
  * \ingroup easyurl
  * \brief   JavaScript publicinterface file for module EasyURL
  */
@@ -25,7 +23,7 @@
 'use strict';
 
 /**
- * Init publicinterface JS
+ * Init publicInterface JS
  *
  * @memberof EasyURL_PublicInterface
  *
@@ -37,7 +35,7 @@
 window.easyurl.publicinterface = {};
 
 /**
- * ExportShortener init
+ * PublicInterface init
  *
  * @memberof EasyURL_PublicInterface
  *
@@ -72,11 +70,10 @@ window.easyurl.publicinterface.init = function() {
       }
     });
   });
-
 };
 
 /**
- * ExportShortener event
+ * PublicInterface event
  *
  * @memberof EasyURL_PublicInterface
  *
@@ -85,5 +82,4 @@ window.easyurl.publicinterface.init = function() {
  *
  * @returns {void}
  */
-window.easyurl.publicinterface.event = function() {
-};
+window.easyurl.publicinterface.event = function() {};
