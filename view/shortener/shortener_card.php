@@ -119,28 +119,28 @@ if (empty($resHook)) {
         $noback = 1;
     }
 
+    if ($action == 'unassign' && !empty($permissiontoadd)) {
+        //@todo voir pour l'url par défaut
+        $object->status       = Shortener::STATUS_VALIDATED;
+        $object->original_url = getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL');
+        $object->fk_element   = NULL;
+        $object->element_type = '';
+
+        $object->update($user);
+
+        update_easy_url_link($object);
+
+        setEventMessage('UnAssignSuccess');
+        if (!empty($backtopage)) {
+            header('Location: ' . $backtopage);
+        } else {
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+        }
+        exit;
+    }
+
     // Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
     require_once DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
-}
-
-if (!empty($permissiontoadd) && $action == 'unassign') {
-
-    $object->status       = Shortener::STATUS_VALIDATED;
-    $object->original_url = getDolGlobalString('EASYURL_DEFAULT_ORIGINAL_URL');
-    $object->fk_element   = NULL;
-    $object->element_type = '';
-
-    $object->update($user, true);
-
-    update_easy_url_link($object);
-
-    setEventMessage('UnassignSuccess');
-    if (GETPOSTISSET('reditect_url')) {
-        header('Location: ' . GETPOST('reditect_url'));
-    } else {
-        header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
-    }
-    exit;
 }
 
 /*
@@ -339,19 +339,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     }
 
     if (empty($resHook) && $permissiontoadd) {
-
-        if ($object->status == Shortener::STATUS_ASSIGN) {
-            // UnAssign
-            $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('Unassign');
-            print '<a class="butAction" id="actionButtonEdit" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=unassign' . '">' . $displayButton . '</a>';
-        }
-
         // Modify
         $displayButton = $onPhone ? '<i class="fas fa-edit fa-2x"></i>' : '<i class="fas fa-edit"></i>' . ' ' . $langs->trans('Modify');
         if ($object->status >= Shortener::STATUS_DRAFT) {
             print '<a class="butAction" id="actionButtonEdit" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . ((dol_strlen($object->element_type) > 0 && !$langs->trans('NoLinkedElement')) ? '&element_type=' . $object->element_type : '') . '&action=edit' . '">' . $displayButton . '</a>';
         } else {
             print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('ObjectMustBeDraft', ucfirst($langs->transnoentities('The' . ucfirst($object->element))))) . '">' . $displayButton . '</span>';
+        }
+
+        // UnAssign
+        $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('UnAssign');
+        if ($object->status == Shortener::STATUS_ASSIGN) {
+            print dolGetButtonAction($displayButton, '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=unassign&token=' . newToken());
         }
 
         // Delete (need delete permission, or if draft, just need create/modify permission).
