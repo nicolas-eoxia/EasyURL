@@ -312,6 +312,32 @@ class Shortener extends SaturneObject
             return $out;
         }
 
+        $linkableElements = saturne_get_objects_metadata();
+        foreach($linkableElements as $linkableElement) {
+            if (GETPOSTISSET('element_type') && !empty(GETPOST('element_type'))) {
+                $checkElementType = $linkableElement['tab_type'] == GETPOST('element_type');
+            } else {
+                $checkElementType = $linkableElement['tab_type'] == $this->element_type;
+            }
+            if ($key == 'fk_element' && $checkElementType) {
+                $out          = '';
+                $objectArrays = [];
+                $objects      = saturne_fetch_all_object_type($linkableElement['class_name']);
+                if (is_array($objects) && !empty($objects)) {
+                    $nameFields = explode(', ', $linkableElement['name_field']);
+                    foreach ($objects as $object) {
+                        $objectArrays[$object->id] = array_reduce($nameFields, function($carry, $field) use ($object) {
+                            return $carry . ' ' . $object->{$field};
+                        });
+                    }
+
+                    $out = Form::selectarray($keyprefix . $key . $keysuffix, $objectArrays, GETPOST('element_type') == '' || GETPOSTISSET('fk_element') && GETPOSTINT('fk_element') ? $value : '', 1, 0, 0, '', 0, 0, 0, '', !empty($val['css']) ? $val['css'] : 'minwidth200 maxwidth300 widthcentpercentminusx');
+                }
+
+                return $out;
+            }
+        }
+
         return parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss, $nonewbutton);
     }
 
@@ -501,7 +527,7 @@ class Shortener extends SaturneObject
                 $out .= '<td class="minwidth100">' . getDictionaryValue('c_shortener_url_type', 'label', $shortener->type) . '</td>';
                 $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : $shortener->showOutputField($this->fields['short_url'], 'short_url', $shortener->short_url)) . '</td>';
                 $out .= '<td>' . $shortener->showOutputField($this->fields['original_url'], 'original_url', $shortener->original_url) . '</td>';
-                $out .= '<td class="center">' . ($user->rights->easyurl->shortener->write > 0 ? '<a class="editfielda" href="' . dol_buildpath('/custom/easyurl/view/shortener/shortener_card.php?id='. $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element_type=1&token=' . newToken() . '&action=edit&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), 1) . '">' . img_edit($langs->trans('Modify')) . '</a>' : '') . '</td>';
+                $out .= '<td class="center">' . ($user->rights->easyurl->shortener->write > 0 ? '<a class="editfielda" href="' . dol_buildpath('/custom/easyurl/view/shortener/shortener_card.php?id='. $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&token=' . newToken() . '&action=edit&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), 1) . '">' . img_edit($langs->trans('Modify')) . '</a>' : '') . '</td>';
                 $out .= '</tr>';
             }
         } else {
