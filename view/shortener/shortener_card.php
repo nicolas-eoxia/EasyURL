@@ -126,11 +126,12 @@ if (empty($resHook)) {
         $object->fk_element   = NULL;
         $object->element_type = '';
 
-        $object->update($user);
+        $object->update($user, true);
+        $object->call_trigger('SHORTENER_UNASSIGN', $user);
 
         update_easy_url_link($object);
 
-        setEventMessage('UnAssignSuccess');
+        setEventMessages($langs->transnoentities('UnassignShortenerSuccess', $object->ref), []);
         if (!empty($backtopage)) {
             header('Location: ' . $backtopage);
         } else {
@@ -245,8 +246,9 @@ if (($id || $ref) && $action == 'edit') {
         $object->fields['fk_element']['label'] = $langs->trans($objectsMetadata['langs']);
 
         if (GETPOST('from_element', 'int') > 0) {
-            $object->fields['element_type']['visible'] = 0;
-            $object->fields['fk_element']['visible']   = 0;
+            $object->fields['element_type']['noteditable'] = 1;
+            $object->fields['fk_element']['picto']         = '';
+            $object->fields['fk_element']['noteditable']   = 1;
         }
     }
 
@@ -347,8 +349,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('ObjectMustBeDraft', ucfirst($langs->transnoentities('The' . ucfirst($object->element))))) . '">' . $displayButton . '</span>';
         }
 
-        // UnAssign
-        $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('UnAssign');
+        // Unassign
+        $displayButton = $onPhone ? '<i class="fas fa-unlink fa-2x" style="color: white"></i>' : '<i class="fas fa-unlink" style="color: white"></i>' . ' ' . $langs->trans('Unassign');
         if ($object->status == Shortener::STATUS_ASSIGN) {
             print dolGetButtonAction($displayButton, '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=unassign&token=' . newToken());
         }
