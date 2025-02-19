@@ -70,7 +70,7 @@ if ($action == 'set_config') {
 
     $curlPostFields = ['action' => 'version'];
     $data           = init_easy_url_curl($curlPostFields);
-    if (empty($data)) {
+    if (empty($data) || (isset($data->errorCode) && $data->errorCode != 200)) {
         setEventMessages('ErrorEasyURLAPIConfig', [], 'errors');
     } else {
         setEventMessages('SavedConfig', []);
