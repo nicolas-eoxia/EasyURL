@@ -118,7 +118,6 @@ class Shortener extends SaturneObject
         'label'               => ['type' => 'varchar(255)',                       'label' => 'Label',            'enabled' => 1, 'position' => 70,  'notnull' => 1, 'visible' => 5, 'noteditable' => 1, 'searchall' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1],
         'short_url'           => ['type' => 'url',                                'label' => 'ShortUrl',         'enabled' => 1, 'position' => 80,  'notnull' => 0, 'visible' => 1, 'noteditable' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
         'original_url'        => ['type' => 'url',                                'label' => 'OriginalUrl',      'enabled' => 1, 'position' => 90,  'notnull' => 0, 'visible' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
-        'type'                => ['type' => 'sellist:c_shortener_url_type:label', 'label' => 'UrlType',          'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1, 'css' => 'maxwidth150 widthcentpercentminusxx'],
         'methode'             => ['type' => 'select',                             'label' => 'UrlMethode',       'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => 5, 'arrayofkeyval' => ['' => '', 'yourls' => 'YOURLS', 'wordpress' => 'WordPress'], 'css' => 'maxwidth200 widthcentpercentminusxx', 'csslist' => 'minwidth150 center', 'help' => 'UrlMethodeDescription'],
         'element_type'        => ['type' => 'select',                             'label' => 'ElementType',      'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'arrayofkeyval' => ['' => ''], 'css' => 'maxwidth150 widthcentpercentminusxx'],
         'fk_element'          => ['type' => 'integer',                            'label' => 'FkElement',        'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'css' => 'minwidth200 maxwidth300 widthcentpercentminusxx'],
@@ -180,11 +179,6 @@ class Shortener extends SaturneObject
      * @var string Original Url
      */
     public string $original_url = '';
-
-    /**
-     * @var string|null Type
-     */
-    public ?string $type = '';
 
     /**
      * @var string Methode
@@ -519,7 +513,6 @@ class Shortener extends SaturneObject
 
         $out  = '<table class="noborder ObjectInfo centpercent">';
         $out .= '<thead><tr class="liste_titre">';
-        //$out .= '<td class="minwidth100"><i class="far fa-minus-square toggleObjectInfo" style="font-size: 1.5em; margin-right: 4px; vertical-align: middle;"></i>' . $langs->trans('UrlType') . '</td>';
         $out .= '<td class="short-url" style="vertical-align: middle;">' . $langs->trans('ShortUrl');
         if (!empty($user->id)) {
             $out .= ($user->conf->EASYURL_SHOW_QRCODE ? img_picto($langs->trans('Enabled'), 'switch_on', 'class="show-qrcode marginleftonly pictoModule marginrightonly"') : img_picto($langs->trans('Disabled'), 'switch_off', 'class="show-qrcode marginleftonly pictoModule marginrightonly"'));
@@ -540,7 +533,6 @@ class Shortener extends SaturneObject
         if (is_array($shorteners) && !empty($shorteners)) {
             foreach ($shorteners as $shortener) {
                 $out .= '<tr>';
-                //$out .= '<td class="minwidth100">' . getDictionaryValue('c_shortener_url_type', 'label', $shortener->type) . '</td>';
                 $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : dol_print_url($shortener->short_url, '_blank', 0, 1)) . '</td>';
                 $out .= '<td>' . $shortener->showOutputField($this->fields['original_url'], 'original_url', $shortener->original_url) . '</td>';
                 if (getDolGlobalInt('EASYURL_SHOW_API_INFOS')) {

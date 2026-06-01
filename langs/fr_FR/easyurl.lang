@@ -127,13 +127,11 @@ Unassign                  = Désaffecter
 UnassignShortenerSuccess  = Désaffectation du raccourcissement d'URL <strong>%s</strong>
 NoLinkedElement           = Aucun élément lié
 ShortenerRepartition      = Répartition des raccourcissements d'URLs par %s
-ShortenerUrlType          = Liste des types d'URLs
 ShowQRCode                = Afficher le QRCode de l'URL raccourcie
 NbClick                   = Nombre de click
 
 # Fiels - Champ
 ShortUrl = URL raccourcie
-UrlType  = Type d'URL
 
 # Public interface - Interface publique
 AssignQRCode        = Affectation de QR Code

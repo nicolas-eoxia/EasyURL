@@ -25,7 +25,6 @@ CREATE TABLE llx_easyurl_shortener(
   label               varchar(255),
   short_url           text,
   original_url        text,
-  type                varchar(255),
   methode             varchar(255),
   element_type        varchar(255),
   fk_element          integer,

@@ -129,7 +129,6 @@ if (empty($resHook)) {
             $object->element_type = 'productlot';
             $object->fk_element   = $linkedObject->id;
             $object->status       = Shortener::STATUS_ASSIGN;
-            $object->type         = 0; // TODO : Changer ça pour mettre une vrai valeur du dico ?
 
             $trackId                   = base64_encode(json_encode(['type' => $linkedObject->element, 'id' => (int) $linkedObject->id]));
             $publicControlInterfaceUrl = dol_buildpath('custom/digiquali/public/control/public_control_history.php?track_id=' . $trackId . '&entity=' . $conf->entity, 3);
