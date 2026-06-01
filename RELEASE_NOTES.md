@@ -1,3 +1,14 @@
+# [EasyURL] [23.0.1] - Nettoyage
+
+Description : Suppression du champ `type` du Shortener et de son dictionnaire `c_shortener_url_type`, restés inaboutis (toujours forcés à 0, jamais affichés, valeurs Document/Other inutilisées).
+
+## Corrections et nettoyage
+
+* Suppression du champ `type` (`$fields`, propriété, affichage commenté), du dictionnaire `c_shortener_url_type` et de ses données.
+* Migration `sql/update.sql` : `DROP` de la colonne `type` et de la table `llx_c_shortener_url_type` sur les bases existantes.
+
+---
+
 # [EasyURL] [23.0.0] - Interface publique de raccourcis - Gestion QRCode - API enrichie
 
 Description : Cette version majeure introduit une interface publique pour les raccourcis et QRCodes (auto-assignation, configuration externe, hooks d'intégration), enrichit la classe Shortener avec un suivi détaillé des clics et fournit une refonte complète de la liaison externe avec d'autres modules (DigiQuali, etc.). Saut de version 1.0.0 → 23.0.0 pour aligner sur la famille Saturne / Dolibarr 23.
