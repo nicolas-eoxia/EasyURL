@@ -49,7 +49,7 @@ class InterfaceEasyURLTriggers extends DolibarrTriggers
         $this->name        = preg_replace('/^Interface/i', '', get_class($this));
         $this->family      = 'demo';
         $this->description = 'EasyURL triggers';
-        $this->version     = '1.0.0';
+        $this->version     = '23.0.0';
         $this->picto       = 'easyurl@easyurl';
     }
 
@@ -109,8 +109,10 @@ class InterfaceEasyURLTriggers extends DolibarrTriggers
         $actioncomm->userownerid = $user->id;
         $actioncomm->percentage  = -1;
 
-        if (getDolGlobalInt('EASYURL_ADVANCED_TRIGGER') && !empty($object->fields)) {
-            $actioncomm->note_private = method_exists($object, 'getTriggerDescription') ? $object->getTriggerDescription($object) : '';
+        if (getDolGlobalInt('EASYURL_ADVANCED_TRIGGER') === 1 &&
+            method_exists($object, 'getTriggerDescription') &&
+            !empty($object->fields)) {
+            $actioncomm->note_private = $object->getTriggerDescription();
         }
 
         switch ($action) {
@@ -163,6 +165,12 @@ class InterfaceEasyURLTriggers extends DolibarrTriggers
                 }
 
                 $actioncomm->label = $langs->trans('ObjectModifyTrigger', $langs->transnoentities(ucfirst($object->element)), $object->ref);
+                $actioncomm->create($user);
+                break;
+
+            // UNASSIGN
+            case 'SHORTENER_UNASSIGN' :
+                $actioncomm->label = $langs->trans('ObjectUnAssignTrigger', $langs->transnoentities(ucfirst($object->element)), $object->ref);
                 $actioncomm->create($user);
                 break;
 

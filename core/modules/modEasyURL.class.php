@@ -78,7 +78,7 @@ class modEasyURL extends DolibarrModules
         $this->editor_url  = 'https://eoxia.com';
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-        $this->version = '1.0.0';
+        $this->version = '23.0.0';
 
         // Url to the file with your last numberversion of this module
         //$this->url_last_version = 'http://www.example.com/versionmodule.txt';
@@ -121,7 +121,8 @@ class modEasyURL extends DolibarrModules
                 'interventioncard',
                 'propallist',
                 'orderlist',
-                'invoicelist'
+                'invoicelist',
+                'publiccontrol'
             ],
             // Set this to 1 if features of module are opened to external users
             'moduleforexternal' => 0
@@ -148,7 +149,7 @@ class modEasyURL extends DolibarrModules
         $this->hidden = false;
 
         // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-        $this->depends      = ['modAgenda', 'modSaturne'];
+        $this->depends      = ['modAgenda', 'modSaturne', 'modExport'];
         $this->requiredby   = []; // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
         $this->conflictwith = []; // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
@@ -185,6 +186,9 @@ class modEasyURL extends DolibarrModules
             // CONST SHORTENER
             $i++ => ['EASYURL_SHORTENER_ADDON', 'chaine', 'mod_shortener_standard', '', 0, 'current'],
 
+            // CONST EXPORT SHORTENER DOCUMENT
+            $i++ => ['EASYURL_EXPORTSHORTENERDOCUMENT_ADDON', 'chaine', 'mod_exportshortenerdocument_standard', '', 0, 'current'],
+
             // CONST DOLIBARR
             $i++ => ['CONTRACT_ALLOW_ONLINESIGN', 'integer', 1, '', 0, 'current'],
             $i   => ['FICHINTER_ALLOW_ONLINE_SIGN', 'integer', 1, '', 0, 'current']
@@ -205,45 +209,7 @@ class modEasyURL extends DolibarrModules
         $this->tabs = [];
 
         // Dictionaries
-        $this->dictionaries = [
-            'langs' => 'easyurl@easyurl',
-            // List of tables we want to see into dictionary editor
-            'tabname' => [
-                MAIN_DB_PREFIX . 'c_shortener_url_type'
-            ],
-            // Label of tables
-            'tablib' => [
-                'ShortenerUrlType'
-            ],
-            // Request to select fields
-            'tabsql' => [
-                'SELECT f.rowid as rowid, f.ref, f.label, f.description, f.position, f.active  FROM ' . MAIN_DB_PREFIX . 'c_shortener_url_type as f'
-            ],
-            // Sort order
-            'tabsqlsort' => [
-                'position ASC'
-            ],
-            // List of fields (result of select to show dictionary)
-            'tabfield' => [
-                'ref,label,description,position'
-            ],
-            // List of fields (list of fields to edit a record)
-            'tabfieldvalue' => [
-                'ref,label,description,position'
-            ],
-            // List of fields (list of fields for insert)
-            'tabfieldinsert' => [
-                'ref,label,description,position'
-            ],
-            // Name of columns with primary key (try to always name it 'rowid')
-            'tabrowid' => [
-                'rowid'
-            ],
-            // Condition to show each dictionary
-            'tabcond' => [
-                $conf->easyurl->enabled
-            ]
-        ];
+        $this->dictionaries = [];
 
         // Boxes/Widgets
         // Add here list of php file(s) stored in easyurl/core/boxes that contains a class to show a widget
@@ -284,6 +250,11 @@ class modEasyURL extends DolibarrModules
         $this->rights[$r][1] = $langs->transnoentities('DeleteObjects', $langs->transnoentities('Shorteners'));
         $this->rights[$r][4] = 'shortener';
         $this->rights[$r][5] = 'delete';
+        $r++;
+        $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+        $this->rights[$r][1] = $langs->transnoentities('AssignShorteners');
+        $this->rights[$r][4] = 'shortener';
+        $this->rights[$r][5] = 'assign';
         $r++;
 
         /* ADMINPAGE PANEL ACCESS PERMISSIONS */

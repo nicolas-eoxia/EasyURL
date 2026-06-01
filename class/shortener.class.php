@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021-2023 EVARISK <technique@evarisk.com>
+/* Copyright (C) 2021-2024 EVARISK <technique@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class Shortener extends SaturneObject
     /**
      * @var int Does object support extrafields ? 0 = No, 1 = Yes
      */
-    public int $isextrafieldmanaged = 0;
+    public $isextrafieldmanaged = 0;
 
     /**
      * @var string Name of icon for shortener. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'shortener@easyurl' if picto is file 'img/object_shortener.png'
@@ -107,23 +107,22 @@ class Shortener extends SaturneObject
      * @var array Array with all fields and their property. Do not use it as a static var. It may be modified by constructor
      */
     public $fields = [
-        'rowid'         => ['type' => 'integer',                            'label' => 'TechnicalID',      'enabled' => 1, 'position' => 1,   'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => 'Id'],
-        'ref'           => ['type' => 'varchar(128)',                       'label' => 'Ref',              'enabled' => 1, 'position' => 10,  'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' =>1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object'],
-        'ref_ext'       => ['type' => 'varchar(128)',                       'label' => 'RefExt',           'enabled' => 1, 'position' => 20,  'notnull' => 0, 'visible' => 0],
-        'entity'        => ['type' => 'integer',                            'label' => 'Entity',           'enabled' => 1, 'position' => 30,  'notnull' => 1, 'visible' => 0, 'index' => 1],
-        'date_creation' => ['type' => 'datetime',                           'label' => 'DateCreation',     'enabled' => 1, 'position' => 40,  'notnull' => 1, 'visible' => 2],
-        'tms'           => ['type' => 'timestamp',                          'label' => 'DateModification', 'enabled' => 1, 'position' => 50,  'notnull' => 0, 'visible' => 0],
-        'import_key'    => ['type' => 'varchar(14)',                        'label' => 'ImportId',         'enabled' => 1, 'position' => 60,  'notnull' => 0, 'visible' => 0],
-        'status'        => ['type' => 'smallint',                           'label' => 'Status',           'enabled' => 1, 'position' => 160, 'notnull' => 1, 'visible' => 2, 'default' => 0, 'index' => 1, 'arrayofkeyval' => [0 => 'StatusDraft', 1 => 'ValidatePendingAssignment', 10 => 'Assign'], 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx'],
-        'label'         => ['type' => 'varchar(255)',                       'label' => 'Label',            'enabled' => 1, 'position' => 70,  'notnull' => 1, 'visible' => 5, 'searchall' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1],
-        'short_url'     => ['type' => 'url',                                'label' => 'ShortUrl',         'enabled' => 1, 'position' => 80,  'notnull' => 0, 'visible' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
-        'original_url'  => ['type' => 'url',                                'label' => 'OriginalUrl',      'enabled' => 1, 'position' => 90,  'notnull' => 0, 'visible' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
-        'type'          => ['type' => 'sellist:c_shortener_url_type:label', 'label' => 'UrlType',          'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1, 'css' => 'maxwidth150 widthcentpercentminusxx'],
-        'methode'       => ['type' => 'select',                             'label' => 'UrlMethode',       'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => 5, 'arrayofkeyval' => ['' => '', 'yourls' => 'YOURLS', 'wordpress' => 'WordPress'], 'css' => 'maxwidth200 widthcentpercentminusxx', 'csslist' => 'minwidth150 center', 'help' => 'UrlMethodeDescription'],
-        'element_type'  => ['type' => 'select',                             'label' => 'ElementType',      'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'arrayofkeyval' => ['' => ''], 'css' => 'maxwidth150 widthcentpercentminusxx'],
-        'fk_element'    => ['type' => 'integer',                            'label' => 'FkElement',        'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'css' => 'minwidth200 maxwidth300 widthcentpercentminusxx'],
-        'fk_user_creat' => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 140, 'notnull' => 1, 'visible' => 0, 'foreignkey' => 'user.rowid'],
-        'fk_user_modif' => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif',  'picto' => 'user', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => 0, 'foreignkey' => 'user.rowid'],
+        'rowid'               => ['type' => 'integer',                            'label' => 'TechnicalID',      'enabled' => 1, 'position' => 1,   'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => 'Id'],
+        'ref'                 => ['type' => 'varchar(128)',                       'label' => 'Ref',              'enabled' => 1, 'position' => 10,  'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' =>1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object'],
+        'ref_ext'             => ['type' => 'varchar(128)',                       'label' => 'RefExt',           'enabled' => 1, 'position' => 20,  'notnull' => 0, 'visible' => 0],
+        'entity'              => ['type' => 'integer',                            'label' => 'Entity',           'enabled' => 1, 'position' => 30,  'notnull' => 1, 'visible' => 0, 'index' => 1],
+        'date_creation'       => ['type' => 'datetime',                           'label' => 'DateCreation',     'enabled' => 1, 'position' => 40,  'notnull' => 1, 'visible' => 2],
+        'tms'                 => ['type' => 'timestamp',                          'label' => 'DateModification', 'enabled' => 1, 'position' => 50,  'notnull' => 0, 'visible' => 2],
+        'import_key'          => ['type' => 'varchar(14)',                        'label' => 'ImportId',         'enabled' => 1, 'position' => 60,  'notnull' => 0, 'visible' => 0],
+        'status'              => ['type' => 'smallint',                           'label' => 'Status',           'enabled' => 1, 'position' => 160, 'notnull' => 1, 'visible' => 2, 'default' => 0, 'index' => 1, 'arrayofkeyval' => [0 => 'StatusDraft', 1 => 'ValidatePendingAssignment', 10 => 'Assign'], 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx'],
+        'label'               => ['type' => 'varchar(255)',                       'label' => 'Label',            'enabled' => 1, 'position' => 70,  'notnull' => 1, 'visible' => 5, 'noteditable' => 1, 'searchall' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1],
+        'short_url'           => ['type' => 'url',                                'label' => 'ShortUrl',         'enabled' => 1, 'position' => 80,  'notnull' => 0, 'visible' => 1, 'noteditable' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
+        'original_url'        => ['type' => 'url',                                'label' => 'OriginalUrl',      'enabled' => 1, 'position' => 90,  'notnull' => 0, 'visible' => 1, 'copytoclipboard' => 1, 'css' => 'minwidth100 maxwidth300 widthcentpercentminusxx nowrap'],
+        'methode'             => ['type' => 'select',                             'label' => 'UrlMethode',       'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => 5, 'arrayofkeyval' => ['' => '', 'yourls' => 'YOURLS', 'wordpress' => 'WordPress'], 'css' => 'maxwidth200 widthcentpercentminusxx', 'csslist' => 'minwidth150 center', 'help' => 'UrlMethodeDescription'],
+        'element_type'        => ['type' => 'select',                             'label' => 'ElementType',      'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'arrayofkeyval' => ['' => ''], 'css' => 'maxwidth150 widthcentpercentminusxx'],
+        'fk_element'          => ['type' => 'integer',                            'label' => 'FkElement',        'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'css' => 'minwidth200 maxwidth300 widthcentpercentminusxx'],
+        'fk_user_creat'       => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 140, 'notnull' => 1, 'visible' => 0, 'foreignkey' => 'user.rowid'],
+        'fk_user_modif'       => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif',  'picto' => 'user', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => 0, 'foreignkey' => 'user.rowid'],
     ];
 
     /**
@@ -182,11 +181,6 @@ class Shortener extends SaturneObject
     public string $original_url = '';
 
     /**
-     * @var string|null Type
-     */
-    public ?string $type = '';
-
-    /**
      * @var string Methode
      */
     public string $methode = '';
@@ -204,17 +198,17 @@ class Shortener extends SaturneObject
     /**
      * @var int User ID
      */
-    public int $fk_user_creat;
+    public $fk_user_creat;
 
     /**
      * @var int|null User ID
      */
-    public ?int $fk_user_modif;
+    public $fk_user_modif;
 
     /**
      * Constructor
      *
-     * @param  DoliDb    $db Database handler
+     * @param  DoliDB    $db Database handler
      * @throws Exception
      */
     public function __construct(DoliDB $db)
@@ -244,12 +238,12 @@ class Shortener extends SaturneObject
             $this->labelStatus[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatus[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatus[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
 
             $this->labelStatusShort[self::STATUS_DELETED]   = $langs->transnoentitiesnoconv('Deleted');
             $this->labelStatusShort[self::STATUS_DRAFT]     = $langs->transnoentitiesnoconv('StatusDraft');
             $this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatePendingAssignment');
-            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assign');
+            $this->labelStatusShort[self::STATUS_ASSIGN]    = $langs->transnoentitiesnoconv('Assigned');
         }
 
         $statusType = 'status' . $status;
@@ -267,18 +261,82 @@ class Shortener extends SaturneObject
     }
 
     /**
-     * Sets object to supplied categories
+     * Return HTML string to put an input field into a page
+     * Code very similar with showInputField of extra fields
      *
-     * Deletes object from existing categories not supplied
-     * Adds it to non-existing supplied categories
-     * Existing categories are left untouched
-     *
-     * @param  int[]|int $categories Category or categories IDs
-     * @return string
+     * @param  string          $key         Key of attribute
+     * @param  string|string[] $value       Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+     * @param  string          $moreparam   To add more parameters on html input tag
+     * @param  string          $keysuffix   Suffix string to add into name and id of field (can be used to avoid duplicate names)
+     * @param  string          $keyprefix   Prefix string to add into name and id of field (can be used to avoid duplicate names)
+     * @param  string|int      $morecss     Value for css to define style/length of field. May also be a numeric
+     * @param  int<0,1>        $nonewbutton Force to not show the new button on field that are links to object
+     * @return string          $out         HTML string to put an input field into a page
+     * @throws Exception
      */
-    public function setCategories($categories): string
+    public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0): string
     {
-        return '';
+        if ($key == 'fromid') {
+            $out             = '';
+            $shortenerArrays = [];
+            $valInfo         = explode(':', $val['type']);
+            $shorteners      = saturne_fetch_all_object_type('Shortener', '', '', 0, 0, ['customsql' => $valInfo[4]]);
+            if (is_array($shorteners) && !empty($shorteners)) {
+                foreach ($shorteners as $shortener) {
+                    $shortenerArrays[$shortener->id] = $shortener->ref;
+                }
+                $out = Form::selectarray($keyprefix . $key . $keysuffix, $shortenerArrays, $value, 1, 0, 0, '', 0, 0, 0, '', !empty($val['css']) ? $val['css'] : 'minwidth200 maxwidth300 widthcentpercentminusx');
+            }
+
+            return $out;
+        }
+
+        $linkableElements = saturne_get_objects_metadata();
+        foreach($linkableElements as $linkableElement) {
+            if (GETPOSTISSET('element_type') && !empty(GETPOST('element_type'))) {
+                $checkElementType = $linkableElement['tab_type'] == GETPOST('element_type');
+            } else {
+                $checkElementType = $linkableElement['tab_type'] == $this->element_type;
+            }
+            if ($key == 'fk_element' && $checkElementType) {
+                $out          = '';
+                $objectArrays = [];
+                $objects      = saturne_fetch_all_object_type($linkableElement['class_name']);
+                if (is_array($objects) && !empty($objects)) {
+                    $nameFields = explode(', ', $linkableElement['name_field']);
+                    foreach ($objects as $object) {
+                        $objectArrays[$object->id] = array_reduce($nameFields, function($carry, $field) use ($object) {
+                            return $carry . ' ' . $object->{$field};
+                        });
+                    }
+
+                    $out = Form::selectarray($keyprefix . $key . $keysuffix, $objectArrays, GETPOST('element_type') == '' || GETPOSTISSET('fk_element') && GETPOSTINT('fk_element') ? $value : '', 1, 0, 0, '', 0, 0, 0, '', !empty($val['css']) ? $val['css'] : 'minwidth200 maxwidth300 widthcentpercentminusx');
+                }
+
+                return $out;
+            }
+        }
+
+        return parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss, $nonewbutton);
+    }
+
+    /**
+     * Write information of trigger description
+     *
+     * @return string Description to display in actioncomm->note_private
+     */
+    public function getTriggerDescription(): string
+    {
+        global $langs;
+
+        $ret  = parent::getTriggerDescription();
+        $ret .= (dol_strlen($this->short_url) > 0 ? $langs->transnoentities('ShortUrl') . ' : ' . $this->short_url . '<br>' : '');
+        $ret .= (dol_strlen($this->original_url) > 0 ? $langs->transnoentities('OriginalUrl') . ' : ' . $this->original_url . '<br>' : '');
+        $ret .= (dol_strlen($this->methode) > 0 ? $langs->transnoentities('UrlMethode') . ' : ' . $this->methode . '<br>' : '');
+        $ret .= (dol_strlen($this->element_type) > 0 ? $langs->transnoentities('ElementType') . ' : ' . $this->element_type . '<br>' : '');
+        $ret .= (!empty($this->fk_element) ? $langs->transnoentities('FkElement') . ' : ' . $this->fk_element . '<br>' : '');
+
+        return $ret;
     }
 
     /**
@@ -289,10 +347,22 @@ class Shortener extends SaturneObject
      */
     public function load_dashboard(): array
     {
-        $getNbShortenerByStatus      = self::getNbShortenerByStatus();
-        $getNbShortenerByElementType = self::getNbShortenerByElementType();
+        global $user, $langs;
 
-        $array['graphs'] = [$getNbShortenerByStatus, $getNbShortenerByElementType];
+        $confName        = strtoupper($this->module) . '_DASHBOARD_CONFIG';
+        $dashboardConfig = json_decode($user->conf->$confName);
+        $array = ['graphs' => [], 'disabledGraphs' => []];
+
+        if (empty($dashboardConfig->graphs->ShortenerRepartitionStatus->hide)) {
+            $array['graphs'][] = $this->getNbShortenerByStatus();
+        } else {
+            $array['disabledGraphs']['ShortenerRepartitionStatus'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('Status')));
+        }
+        if (empty($dashboardConfig->graphs->ShortenerRepartitionElementType->hide)) {
+            $array['graphs'][] = $this->getNbShortenerByElementType();
+        } else {
+            $array['disabledGraphs']['ShortenerRepartitionElementType'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('ElementType')));
+        }
 
         return $array;
     }
@@ -309,6 +379,7 @@ class Shortener extends SaturneObject
 
         // Graph Title parameters
         $array['title'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('Status')));
+        $array['name']  = 'ShortenerRepartitionStatus';
         $array['picto'] = $this->picto;
 
         // Graph parameters
@@ -362,6 +433,7 @@ class Shortener extends SaturneObject
 
         // Graph Title parameters
         $array['title'] = $langs->transnoentities('ShortenerRepartition', dol_strtolower($langs->transnoentities('ElementType')));
+        $array['name']  = 'ShortenerRepartitionElementType';
         $array['picto'] = $this->picto;
 
         // Graph parameters
@@ -406,15 +478,20 @@ class Shortener extends SaturneObject
     /**
      * Display more object details
      *
-     * @param  CommonObject $object Current object
-     * @return string       $out    Output current table object details
+     * @param  CommonObject $object  Current object
+     * @param  string       $trackId Track ID
+     * @return string       $out     Output current table object details
      * @throws Exception
      */
-    public function displayObjectDetails(CommonObject $object): string
+    public function displayObjectDetails(CommonObject $object, string $trackId = ''): string
     {
         require_once __DIR__ . '/../../saturne/lib/medias.lib.php';
 
         global $conf, $form, $langs, $user;
+
+        if (!$form) {
+            $form = new Form($this->db);
+        }
 
         switch ($object->element) {
             case 'propal' :
@@ -436,13 +513,19 @@ class Shortener extends SaturneObject
 
         $out  = '<table class="noborder ObjectInfo centpercent">';
         $out .= '<thead><tr class="liste_titre">';
-        $out .= '<td class="minwidth100"><i class="far fa-minus-square toggleObjectInfo" style="font-size: 1.5em; margin-right: 4px; vertical-align: middle;"></i>' . $langs->trans('UrlType') . '</td>';
         $out .= '<td class="short-url" style="vertical-align: middle;">' . $langs->trans('ShortUrl');
-        $out .= ($user->conf->EASYURL_SHOW_QRCODE ? img_picto($langs->trans('Enabled'), 'switch_on', 'class="show-qrcode marginleftonly pictoModule marginrightonly"') : img_picto($langs->trans('Disabled'), 'switch_off', 'class="show-qrcode marginleftonly pictoModule marginrightonly"'));
-        $out .= $form->textwithpicto('', $langs->trans('ShowQRCode'));
+        if (!empty($user->id)) {
+            $out .= ($user->conf->EASYURL_SHOW_QRCODE ? img_picto($langs->trans('Enabled'), 'switch_on', 'class="show-qrcode marginleftonly pictoModule marginrightonly"') : img_picto($langs->trans('Disabled'), 'switch_off', 'class="show-qrcode marginleftonly pictoModule marginrightonly"'));
+            $out .= $form->textwithpicto('', $langs->trans('ShowQRCode'));
+        }
         $out .= '</td>';
         $out .= '<td>' . $langs->trans('OriginalUrl') . '</td>';
-        $out .= '<td class="center">' . dolButtonToOpenUrlInDialogPopup('assignShortener', $langs->transnoentities('AssignShortener'), '<span class="fa fa fa-link valignmiddle btnTitle-icon" title="' . $langs->trans('Assign') . '"></span>', '/custom/easyurl/view/shortener/shortener_card.php?element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&action=edit_assign&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), '', 'btnTitle') . '</td>';
+        if (getDolGlobalInt('EASYURL_SHOW_API_INFOS')) {
+            $out .= '<td>' . $langs->trans('NbClick') . '</td>';
+        }
+        if ($user->hasRight('easyurl', 'shortener', 'write')) {
+            $out .= '<td class="center">' . dolButtonToOpenUrlInDialogPopup('assignShortener', $langs->transnoentities('AssignShortener'), '<span class="fas fa-link fa-2x valignmiddle btnTitle-icon" title="' . $langs->trans('Assign') . '"></span>', '/custom/easyurl/view/shortener/shortener_card.php?element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&action=edit_assign', '', 'btnTitle', 'window.saturne.toolbox.checkIframeCreation();') . '</td>';
+        }
         $out .= '</thead></tr>';
         $out .= '<tbody>';
 
@@ -450,14 +533,24 @@ class Shortener extends SaturneObject
         if (is_array($shorteners) && !empty($shorteners)) {
             foreach ($shorteners as $shortener) {
                 $out .= '<tr>';
-                $out .= '<td class="minwidth100">' . getDictionaryValue('c_shortener_url_type', 'label', $shortener->type) . '</td>';
-                $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : $shortener->showOutputField($this->fields['short_url'], 'short_url', $shortener->short_url)) . '</td>';
+                $out .= '<td>' . ($user->conf->EASYURL_SHOW_QRCODE ? saturne_show_medias_linked('easyurl', $conf->easyurl->multidir_output[$conf->entity] . '/shortener/' . $shortener->ref . '/qrcode/', 'small', 1, 0, 0, 0, 80, 80, 0, 0, 1, 'shortener/'. $shortener->ref . '/qrcode/', $shortener, '', 0, 0) : dol_print_url($shortener->short_url, '_blank', 0, 1)) . '</td>';
                 $out .= '<td>' . $shortener->showOutputField($this->fields['original_url'], 'original_url', $shortener->original_url) . '</td>';
-                $out .= '<td class="center">' . ($user->rights->easyurl->shortener->write > 0 ? '<a class="editfielda" href="' . dol_buildpath('/custom/easyurl/view/shortener/shortener_card.php?id='. $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element_type=1&token=' . newToken() . '&action=edit&backtopage=' . urlencode($_SERVER['PHP_SELF'] . '?id=' . $object->id), 1) . '">' . img_edit($langs->trans('Modify')) . '</a>' : '') . '</td>';
+                if (getDolGlobalInt('EASYURL_SHOW_API_INFOS')) {
+                    $shortenerData = get_easy_url_link($object, 'all');
+                    $out .= '<td>' . (isset($shortenerData->link) && isset($shortenerData->link->clicks) ? $shortenerData->link->clicks : 0) . '</td>';
+                }
+                if ($user->hasRight('easyurl', 'shortener', 'write')) {
+                    $backToPage = urlencode($_SERVER['PHP_SELF'] . (!empty($trackId) ? '?track_id=' . $trackId . '&entity=' . GETPOSTINT('entity') . '&route=' . GETPOST('route') : '?id=' . $object->id));
+                    $out .= '<td class="center">';
+                    $out .= '<a class="editfielda paddingright" href="' . dol_buildpath('custom/easyurl/view/shortener/shortener_card.php?id=' . $shortener->id . '&element_type=' . $element_type . '&fk_element=' . $object->id . '&from_element=1&token=' . newToken() . '&action=edit&backtopage=' . $backToPage, 1) . '">' . img_edit($langs->trans('Modify')) . '</a>';
+                    $out .= '<a class="editfielda" href="' . dol_buildpath('custom/easyurl/view/shortener/shortener_card.php?id=' . $shortener->id . '&action=unassign&backtopage=' . $backToPage, 1) . '">' . img_picto($langs->transnoentities('Unassign'), 'unlink') . '</a>';
+                    $out .= '</td>';
+                }
                 $out .= '</tr>';
             }
         } else {
-            $out .= '<tr><td colspan="4" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
+            $colspan = 4 + getDolGlobalInt('EASYURL_SHOW_API_INFOS');
+            $out    .= '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans('NoRecordFound') . '</td></tr>';
         }
         $out .= '</tbody></table>';
 
